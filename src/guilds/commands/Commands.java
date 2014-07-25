@@ -82,6 +82,10 @@ public class Commands implements CommandExecutor {
 				else if (args[0].equalsIgnoreCase("world")) {
 					new CommandWorld(sender, args, GuildsBasic);
 				}
+                                
+                                else if (args[0].equalsIgnoreCase("info")) {
+					new CommandInfo(sender, args, GuildsBasic);
+				}
 				
 				else {
 					if (sender instanceof Player) new Message(MessageType.COMMAND_NOT_RECOGNISED, (Player) sender, args[0], GuildsBasic);
