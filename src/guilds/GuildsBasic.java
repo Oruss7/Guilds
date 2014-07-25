@@ -127,7 +127,7 @@ public class GuildsBasic extends JavaPlugin {
 
         // WorldGuard may not be loaded
         if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            throw new Exception("Wordguard not found");
+            return null;
         }
 
         return (WorldGuardPlugin) plugin;

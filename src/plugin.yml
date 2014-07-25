@@ -3,7 +3,7 @@ main: guilds.GuildsBasic
 version: 1.0.0
 author: largo7
 website: http://eredrim.fr
-depend: [WorldGuard]
+softdepend: [WorldGuard]
 commands:
   guilds:
     description: Various commands for Guilds.
@@ -35,6 +35,8 @@ permissions:
             guilds.admin.save: true
             guilds.admin.load: true
             guilds.user.leave: true
+            guilds.user.chat: true
+            guilds.user.info: true
     guilds.admin.*:
         description: Gives access to all guilds admin commands
         children:
@@ -56,6 +58,7 @@ permissions:
             guilds.user.list: true
             guilds.user.leave: true
             guilds.user.chat: true
+            guilds.user.info: true
     guilds.admin.kick:
         description: Permission
         default: op
@@ -102,5 +105,8 @@ permissions:
         description: Permission
         default: op
     guilds.user.list:
+        description: Permission
+        default: true
+    guilds.user.info:
         description: Permission
         default: true
