@@ -5,7 +5,7 @@ import guilds.GuildsBasic;
 import guilds.messages.Console;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
-
+import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -40,9 +40,10 @@ public class CommandRemove {
                             new Message(MessageType.GUILD_NOT_RECOGNISED, p, guildName.toString(), GuildsBasic);
                         } else {
                             new Message(MessageType.GUILD_DELETED, p, guild, GuildsBasic);
+
                             GuildsBasic.saveGuilds();
-                            GuildsBasic.loadGuilds();
                             GuildsBasic.savePlayers();
+                            GuildsBasic.loadGuilds();
                             GuildsBasic.loadPlayers();
                         }
                     } else {
