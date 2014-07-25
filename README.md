@@ -22,3 +22,4 @@ Require :
 - Protection de votre Q.G. grâce à WorldGuard (ou residence)
 - Système d'invitation (accepter/décliner)
 - rangs (officier, recrue ...) avec gestion des couleurs dans le canal guilde
+- Gestion des joueurs par UUID (le plugin utilise encore l'ancien système)
