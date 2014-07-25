@@ -420,6 +420,12 @@ public class GuildsBasic extends JavaPlugin {
             GuildsConfig.setDefaults(defConfig);
         }
 
+        Set<String> ply = GuildsConfig.getConfigurationSection("").getKeys(false);
+
+        for (String str : ply) {
+            GuildsConfig.set(str, null);
+        }
+        
         if (!GuildsList.isEmpty()) {
 
             Set<String> keys = GuildsConfig.getConfigurationSection("").getKeys(false);
@@ -531,7 +537,6 @@ public class GuildsBasic extends JavaPlugin {
             String key = null;
             String value = null;
             for (Map.Entry<String, Guild> p : PlayerGuild.entrySet()) {
-                sendConsole("key:" + p.getKey() + " value:" + p.getValue().getName());
                 key = p.getKey() + ".Guild";
                 if (p.getValue() == null) {
                     value = null;
@@ -584,7 +589,6 @@ public class GuildsBasic extends JavaPlugin {
         prefix = prefix.replaceAll("&([0-9a-fk-or])", "\u00A7$1");
 
         p.sendMessage(prefix + msg);
-
     }
 
     public void sendConsole(String msg) {
