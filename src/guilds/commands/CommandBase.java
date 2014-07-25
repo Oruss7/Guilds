@@ -33,9 +33,11 @@ public class CommandBase {
 			Guild g = GuildsBasic.getPlayerGuild(p);
 			if (g != null) {
 				if (GuildsBasic.getIntSetting(Settings.SET_BASE_TP_DELAY) == 0) {
+                                        new Message(MessageType.TELEPORTATION, p, GuildsBasic);
 					p.teleport(g.getBase());
 				} else {
-					GuildsBasic.BaseDelay.put(p, new Scheduler(GuildsBasic).base(p));
+                                    new Message(MessageType.BASE_DELAY, p, GuildsBasic);
+                                    GuildsBasic.BaseDelay.put(p, new Scheduler(GuildsBasic).base(p));
 				}
 			} else {
 				new Message(MessageType.NOT_IN_GUILD, p, GuildsBasic);

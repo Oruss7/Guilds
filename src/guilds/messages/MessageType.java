@@ -54,7 +54,9 @@ public enum MessageType {
 	INPUT_NOT_RECOGNISED("&einput /i/ not recognised."),
 	TOGGLE_NOT_RECOGNISED("&eplease use 'world' or 'biome' to toggle."),
 	WORLD_NOT_RECOGNISED("&e/w/ not a recognised world."),
-	WRONG_INPUT("&e/p/ does not have /i/ setting.");
+	WRONG_INPUT("&e/p/ does not have /i/ setting."),
+        BASE_DELAY("&eVous serez téléporté dans /delay/ secondes."),
+        TELEPORTATION("&eTéléportation dans votre base");
     
     String str;
    

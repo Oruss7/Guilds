@@ -14,6 +14,7 @@ public class Message {
 		
 		if (message.contains("/p/")) message = message.replaceAll("/p/", input1.getName());
 		if (message.contains("/g/")) message = message.replaceAll("/g/", "");
+                if (message.contains("/delay/")) message = message.replaceAll("/delay/", String.valueOf(GuildsBasic.getIntSetting(Settings.SET_BASE_TP_DELAY)));
 		
 		GuildsBasic.sendMessage(input1, message);
 		
