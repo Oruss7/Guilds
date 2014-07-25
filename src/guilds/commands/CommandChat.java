@@ -5,8 +5,6 @@ import guilds.GuildsBasic;
 import guilds.messages.Console;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
-import guilds.utilities.Scheduler;
-import guilds.utilities.Settings;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

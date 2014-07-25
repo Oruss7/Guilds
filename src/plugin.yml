@@ -1,6 +1,8 @@
 name: Guilds
 main: guilds.GuildsBasic
-version: 2.2.8
+version: 1.0.0
+author: largo7
+website: http://eredrim.fr
 depend: [WorldGuard]
 commands:
   guilds:
