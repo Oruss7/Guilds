@@ -66,7 +66,7 @@ public class CommandInvite {
             GuildsBasic.savePlayers();
             GuildsBasic.loadPlayers();
             new Message(MessageType.INVITATION, playerTarget, guild, GuildsBasic);
-            new Message(MessageType.PLAYER_INVITED, playerTarget, GuildsBasic);
+            new Message(MessageType.PLAYER_INVITED, player, playerTarget, GuildsBasic);
         }
 
         if (args[0].equalsIgnoreCase("accept")) {
@@ -74,6 +74,7 @@ public class CommandInvite {
             String guildName = GuildsBasic.getPlayerPending(player);
             if (guildName == null) {
                 new Message(MessageType.NO_PENDING, player, GuildsBasic);
+                return;
             }
 
             if (!player.hasPermission("guilds.user.join")) {
@@ -120,6 +121,7 @@ public class CommandInvite {
             String guildName = GuildsBasic.getPlayerPending(player);
             if (guildName == null) {
                 new Message(MessageType.NO_PENDING, player, GuildsBasic);
+                return;
             }
 
             GuildsBasic.PlayerPending.remove(player.getName());
