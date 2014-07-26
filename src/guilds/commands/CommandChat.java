@@ -32,14 +32,14 @@ class CommandChat {
             if (g != null) {
                 StringBuilder message = new StringBuilder();
                 for (int i = 0; i < args.length; i++) {
-                    message = message.append(args[i]);
+                    message = message.append(" ").append(args[i]);
                 }
                 
                 for (Map.Entry<String, Guild> es : GuildsBasic.PlayerGuild.entrySet()) {
                     Guild guild = es.getValue();
                     if (guild != null && guild.getName().equalsIgnoreCase(g.getName())) {
                         Player player = User.getPlayer(es.getKey());
-                        if(player != null && player.isOnline() && !player.equals(p)){
+                        if(player != null && player.isOnline()){
                             GuildsBasic.sendMessage(player, p.getDisplayName() + ":&f "+ message.toString());
                         }
                     }
