@@ -36,6 +36,7 @@ public class CommandKick {
 					if (GuildsBasic.PlayerGuild.containsKey(player.getName())) {
 						GuildsBasic.PlayerGuild.remove(player.getName());
                                                 GuildsBasic.PlayerJoined.remove(player.getName());
+                                                GuildsBasic.PlayerRank.remove(player.getName());
 					}
 					GuildsBasic.savePlayers();
 					GuildsBasic.loadPlayers();

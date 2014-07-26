@@ -34,11 +34,11 @@ public class CommandLeave {
 					GuildsBasic.getPlayerGuild(p).subtractOnline();
 				}
 				
-				if (GuildsBasic.PlayerGuild.remove(p.getDisplayName()) == null){
-                                    GuildsBasic.sendConsole("player "+p.getDisplayName()+" not in guild");
+				if (GuildsBasic.PlayerGuild.remove(p.getName()) == null){
+                                    GuildsBasic.sendConsole("player "+p.getName()+" not in guild");
                                 }
                                     
-				
+				GuildsBasic.PlayerRank.remove(p.getName());
 				new Message(MessageType.GUILD_LEAVE, p, GuildsBasic);
 				
 				GuildsBasic.savePlayers();
