@@ -47,6 +47,7 @@ public class GuildsBasic extends JavaPlugin {
     public Map<String, Guild> PlayerGuild = new HashMap<>();
     public Map<String, Long> PlayerJoined = new HashMap<>();
     public Map<String, String> PlayerRank = new HashMap<>();
+    public Map<String, String> PlayerPending = new HashMap<>();
     public Map<Player, User> PlayerUser = new HashMap<>();
     public Map<Player, Integer> BaseDelay = new HashMap<>();
     public List<Guild> GuildsList = new ArrayList<>();
@@ -54,12 +55,12 @@ public class GuildsBasic extends JavaPlugin {
     public void onEnable() {
 
         PM = getServer().getPluginManager();
-        
+
         try {
             wg = getWorldGuard();
         } catch (Exception ex) {
-             this.getLogger().log(Level.SEVERE, "Worldguard not found", ex);
-             PM.disablePlugin(this);
+            this.getLogger().log(Level.SEVERE, "Worldguard not found", ex);
+            //PM.disablePlugin(this);
         }
 
         File SettingsFile = new File(getDataFolder(), "settings.yml");
@@ -105,7 +106,6 @@ public class GuildsBasic extends JavaPlugin {
             PlayerUser.put(p, newPlayerUser(p));
             Guild g = getPlayerGuild(p);
             World w = p.getWorld();
-            Biome b = p.getLocation().getBlock().getBiome();
             if (g != null) {
                 g.addOnline();
             }
@@ -148,6 +148,17 @@ public class GuildsBasic extends JavaPlugin {
         } else {
             return 0L;
         }
+    }
+    
+    public String getPlayerPending(Player p) {
+        return PlayerPending.get(p.getName());
+    }
+    
+    public void setPlayerPending(Player p,Guild g){
+        if(PlayerPending.get(p.getName())!=null){
+            PlayerPending.remove(p.getName());
+        }
+        PlayerPending.put(p.getName(), g.getName());
     }
 
     public void setPlayerJoined(Player p, Long l) {
@@ -196,7 +207,7 @@ public class GuildsBasic extends JavaPlugin {
     public Plugin getWg() {
         return wg;
     }
-    
+
     public void loadMessages() {
 
         sendConsole("Loading messages.yml");
@@ -359,10 +370,12 @@ public class GuildsBasic extends JavaPlugin {
             guild.setColor(GuildsConfig.getString(str + ".Settings.Color", ""));
             guild.setPlayerPrefix(GuildsConfig.getString(str + ".Settings.Prefix", ""));
             guild.setPlayerSuffix(GuildsConfig.getString(str + ".Settings.Suffix", ""));
+            guild.setLead(GuildsConfig.getString(str + ".Settings.Lead", ""));
         } else {
             guild.setColor(GuildsConfig.getString(str + ".settings.color", ""));
             guild.setPlayerPrefix(GuildsConfig.getString(str + ".settings.prefix", ""));
             guild.setPlayerSuffix(GuildsConfig.getString(str + ".settings.suffix", ""));
+            guild.setLead(GuildsConfig.getString(str + ".Settings.Lead", ""));
         }
 
         path = str + ".Base";
@@ -426,7 +439,7 @@ public class GuildsBasic extends JavaPlugin {
         for (String str : ply) {
             GuildsConfig.set(str, null);
         }
-        
+
         if (!GuildsList.isEmpty()) {
 
             Set<String> keys = GuildsConfig.getConfigurationSection("").getKeys(false);
@@ -442,6 +455,7 @@ public class GuildsBasic extends JavaPlugin {
                 GuildsConfig.set(name + ".Settings.Color", g.getColor());
                 GuildsConfig.set(name + ".Settings.Prefix", g.getPlayerPrefix());
                 GuildsConfig.set(name + ".Settings.Suffix", g.getPlayerSuffix());
+                GuildsConfig.set(name + ".Settings.Lead", g.getLead());
 
                 for (World w : Bukkit.getServer().getWorlds()) {
                     if (g.getWorlds().contains(w)) {
@@ -497,18 +511,22 @@ public class GuildsBasic extends JavaPlugin {
             return; // No Players
         } else {
             for (String str : p) {
-                Guild gld = null;
+                Guild guild = null;
                 for (Guild g : GuildsList) {
                     if (g.getName().equalsIgnoreCase(PlayersConfig.getString(str + ".Guild"))) {
-                        gld = g;
+                        guild = g;
                     }
                 }
-                if (gld == null) {
+                if (guild == null) {
                     PlayerGuild.put(str, null);
                     PlayerJoined.put(str, 0L);
+                    PlayerRank.put(str, null);
+                    PlayerPending.put(str, null);
                 } else {
-                    PlayerGuild.put(str, gld);
+                    PlayerGuild.put(str, guild);
                     PlayerJoined.put(str, PlayersConfig.getLong(str + ".Joined", 0L));
+                    PlayerRank.put(str, PlayersConfig.getString(str+".Rank", null));
+                    PlayerPending.put(str, PlayersConfig.getString(str+".Pending",null));
                 }
             }
         }
@@ -537,24 +555,46 @@ public class GuildsBasic extends JavaPlugin {
         if (!PlayerGuild.isEmpty()) {
             String key = null;
             String value = null;
-            for (Map.Entry<String, Guild> p : PlayerGuild.entrySet()) {
-                key = p.getKey() + ".Guild";
-                if (p.getValue() == null) {
+            for (Map.Entry<String, Guild> guild : PlayerGuild.entrySet()) {
+                key = guild.getKey() + ".Guild";
+                if (guild.getValue() == null) {
                     value = null;
                 } else {
-                    value = p.getValue().getName();
+                    value = guild.getValue().getName();
+                }
+                PlayersConfig.set(key, value);
+            }
+            key = null;
+            value = null;
+            for (Map.Entry<String, String> rank : PlayerRank.entrySet()) {
+                key = rank.getKey() + ".Rank";
+                if (rank.getValue() == null) {
+                    value = null;
+                } else {
+                    value = rank.getValue();
                 }
                 PlayersConfig.set(key, value);
             }
             Long lng = 0L;
-            for (Map.Entry<String, Long> p : PlayerJoined.entrySet()) {
-                key = p.getKey() + ".Joined";
-                if (p.getValue() == null) {
+            for (Map.Entry<String, Long> joined : PlayerJoined.entrySet()) {
+                key = joined.getKey() + ".Joined";
+                if (joined.getValue() == null) {
                     lng = null;
                 } else {
-                    lng = p.getValue();
+                    lng = joined.getValue();
                 }
                 PlayersConfig.set(key, lng);
+            }
+            key = null;
+            value = null;
+            for (Map.Entry<String, String> pending : PlayerPending.entrySet()) {
+                key = pending.getKey() + ".Pending";
+                if (pending.getValue() == null) {
+                    value = null;
+                } else {
+                    value = pending.getValue();
+                }
+                PlayersConfig.set(key, value);
             }
         }
 
