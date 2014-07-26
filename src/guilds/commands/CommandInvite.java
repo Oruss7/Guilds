@@ -28,10 +28,8 @@ public class CommandInvite {
 
     private void Player(String[] args, Player player) {
 
-        Player playerTarget = User.getPlayer(args[1]);
-
         if (args[0].equalsIgnoreCase("invite")) {
-
+            Player playerTarget = User.getPlayer(args[1]);
             Guild guild = GuildsBasic.getPlayerGuild(player);
 
             if (guild == null) {
@@ -68,12 +66,12 @@ public class CommandInvite {
             GuildsBasic.savePlayers();
             GuildsBasic.loadPlayers();
             new Message(MessageType.INVITATION, playerTarget, guild, GuildsBasic);
-            new Message(MessageType.PLAYER_INVITED, player, GuildsBasic);
+            new Message(MessageType.PLAYER_INVITED, playerTarget, GuildsBasic);
         }
 
         if (args[0].equalsIgnoreCase("accept")) {
 
-            String guildName = GuildsBasic.getPlayerPending(playerTarget);
+            String guildName = GuildsBasic.getPlayerPending(player);
             if (guildName == null) {
                 new Message(MessageType.NO_PENDING, player, GuildsBasic);
             }
@@ -119,7 +117,7 @@ public class CommandInvite {
         }
 
         if (args[0].equalsIgnoreCase("deny")) {
-            String guildName = GuildsBasic.getPlayerPending(playerTarget);
+            String guildName = GuildsBasic.getPlayerPending(player);
             if (guildName == null) {
                 new Message(MessageType.NO_PENDING, player, GuildsBasic);
             }
