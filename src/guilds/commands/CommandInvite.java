@@ -133,6 +133,9 @@ public class CommandInvite {
                     new Message(MessageType.INVITATION_DENY, lead, GuildsBasic);
                 }
             }
+            
+            GuildsBasic.savePlayers();
+            GuildsBasic.loadPlayers();
 
         }
     }

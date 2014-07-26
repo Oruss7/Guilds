@@ -149,13 +149,24 @@ public class GuildsBasic extends JavaPlugin {
             return 0L;
         }
     }
-    
+
     public String getPlayerPending(Player p) {
+        String key = null;
+        String value = null;
+        for (Map.Entry<String, String> pending : PlayerPending.entrySet()) {
+            key = pending.getKey();
+            if (pending.getValue() == null) {
+                value = "";
+            } else {
+                value = pending.getValue();
+            }
+             sendConsole("joueur : "+key + "pending : " + value);
+        }
         return PlayerPending.get(p.getName());
     }
-    
-    public void setPlayerPending(Player p,Guild g){
-        if(PlayerPending.get(p.getName())!=null){
+
+    public void setPlayerPending(Player p, Guild g) {
+        if (PlayerPending.get(p.getName()) != null) {
             PlayerPending.remove(p.getName());
         }
         PlayerPending.put(p.getName(), g.getName());
@@ -521,12 +532,12 @@ public class GuildsBasic extends JavaPlugin {
                     PlayerGuild.put(str, null);
                     PlayerJoined.put(str, 0L);
                     PlayerRank.put(str, null);
-                    PlayerPending.put(str, null);
+                    PlayerPending.put(str, PlayersConfig.getString(str + ".Pending", null));
                 } else {
                     PlayerGuild.put(str, guild);
                     PlayerJoined.put(str, PlayersConfig.getLong(str + ".Joined", 0L));
-                    PlayerRank.put(str, PlayersConfig.getString(str+".Rank", null));
-                    PlayerPending.put(str, PlayersConfig.getString(str+".Pending",null));
+                    PlayerRank.put(str, PlayersConfig.getString(str + ".Rank", null));
+                    PlayerPending.put(str, PlayersConfig.getString(str + ".Pending", null));
                 }
             }
         }
