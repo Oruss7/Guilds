@@ -38,7 +38,9 @@ class CommandChat {
                 for (Map.Entry<String, Guild> es : GuildsBasic.PlayerGuild.entrySet()) {
                     if (es.getValue().getName().equalsIgnoreCase(g.getName())) {
                         Player player = User.getPlayer(es.getKey());
-                        GuildsBasic.sendMessage(player, p.getDisplayName() + ": "+ message.toString());
+                        if(player != null && player.isOnline()){
+                            GuildsBasic.sendMessage(player, p.getDisplayName() + ": "+ message.toString());
+                        }
                     }
                 }
 
