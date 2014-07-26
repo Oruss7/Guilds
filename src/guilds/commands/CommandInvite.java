@@ -31,6 +31,13 @@ public class CommandInvite {
         Player playerTarget = User.getPlayer(args[1]);
 
         if (args[0].equalsIgnoreCase("invite")) {
+
+            Guild guild = GuildsBasic.getPlayerGuild(player);
+
+            if (guild == null) {
+                new Message(MessageType.NOT_IN_GUILD, player, GuildsBasic);
+                return;
+            }
             if (args.length < 2) {
                 new Message(MessageType.COMMAND_INVITE, player, GuildsBasic);
                 return;
@@ -56,7 +63,6 @@ public class CommandInvite {
                 new Message(MessageType.ALREADY_PENDING, player, currentGuildPending, GuildsBasic);
             }
 
-            Guild guild = GuildsBasic.getPlayerGuild(player);
             GuildsBasic.setPlayerPending(playerTarget, guild);
 
             GuildsBasic.savePlayers();
