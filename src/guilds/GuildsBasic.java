@@ -46,6 +46,7 @@ public class GuildsBasic extends JavaPlugin {
     private File MessagesConfigFile = null;
     public Map<String, Guild> PlayerGuild = new HashMap<>();
     public Map<String, Long> PlayerJoined = new HashMap<>();
+    public Map<String, String> PlayerRank = new HashMap<>();
     public Map<Player, User> PlayerUser = new HashMap<>();
     public Map<Player, Integer> BaseDelay = new HashMap<>();
     public List<Guild> GuildsList = new ArrayList<>();

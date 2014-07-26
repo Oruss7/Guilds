@@ -2,11 +2,11 @@ package guilds.commands;
 
 import guilds.Guild;
 import guilds.GuildsBasic;
+import guilds.User;
 import guilds.messages.Console;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
 import java.util.Map;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ class CommandChat {
                 
                 for (Map.Entry<String, Guild> es : GuildsBasic.PlayerGuild.entrySet()) {
                     if (es.getValue().getName().equalsIgnoreCase(g.getName())) {
-                        Player player = Bukkit.getPlayer(es.getKey());
+                        Player player = User.getPlayer(es.getKey());
                         GuildsBasic.sendMessage(player, p.getDisplayName() + ": "+ message.toString());
                     }
                 }

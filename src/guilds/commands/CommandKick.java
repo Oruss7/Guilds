@@ -1,11 +1,10 @@
 package guilds.commands;
 
 import guilds.GuildsBasic;
+import guilds.User;
 import guilds.messages.Console;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
-
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,7 +28,7 @@ public class CommandKick {
 		
 		if (args.length > 1) {
 			if (p.hasPermission("guilds.admin.kick")) {
-				Player player = Bukkit.getPlayer(args[1]);
+				Player player = User.getPlayer(args[1]);
 				if (player != null) {
 					if (GuildsBasic.getPlayerGuild(player) != null) {
 						GuildsBasic.getPlayerGuild(player).subtractOnline();
@@ -57,7 +56,7 @@ public class CommandKick {
 	private void Console(String[] args) {
 		
 		if (args.length > 1) {
-			Player player = Bukkit.getPlayer(args[1]);
+			Player player = User.getPlayer(args[1]);
 			if (player != null) {
 				if (GuildsBasic.getPlayerGuild(player) != null) {
 					GuildsBasic.getPlayerGuild(player).subtractOnline();

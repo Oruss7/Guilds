@@ -1,14 +1,13 @@
 package guilds.commands;
 
-import static com.oracle.jrockit.jfr.ContentType.Timestamp;
 import guilds.Guild;
 import guilds.GuildsBasic;
+import guilds.User;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +36,7 @@ public class CommandInfo {
                 return;
             }
 
-            Player target = Bukkit.getPlayer(args[1]);
+            Player target = User.getPlayer(args[1]);
 
             if (target != null) {
                 if (GuildsBasic.PlayerGuild.containsKey(target.getName())) {

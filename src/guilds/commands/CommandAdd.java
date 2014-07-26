@@ -2,11 +2,10 @@ package guilds.commands;
 
 import guilds.Guild;
 import guilds.GuildsBasic;
+import guilds.User;
 import guilds.messages.Console;
 import guilds.messages.Message;
 import guilds.messages.MessageType;
-
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -30,7 +29,7 @@ public class CommandAdd {
 		
 		if (args.length > 2) {
 			if (player.hasPermission("guilds.admin.add")) {
-				Player p = Bukkit.getPlayer(args[1]);
+				Player p = User.getPlayer(args[1]);                              
 				Guild g = GuildsBasic.getGuild(args[2]);
 				if (p != null) {
 					if (g != null) {
@@ -69,7 +68,7 @@ public class CommandAdd {
 	private void Console(String[] args) {
 		
 		if (args.length > 2) {
-			Player p = Bukkit.getPlayer(args[1]);
+			Player p = User.getPlayer(args[1]);
 			Guild g = GuildsBasic.getGuild(args[2]);
 			if (p != null) {
 				if (g != null) {
