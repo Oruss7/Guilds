@@ -6,7 +6,6 @@ import guilds.User;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -54,13 +53,13 @@ public class CommandInfo {
                         player.sendMessage(ChatColor.AQUA + plugin.getMessage("JOINED") + " : " + dt.format(date));
                         player.sendMessage(ChatColor.YELLOW+ "==================================");
                     } else {
-                        player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
+                        player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", target.getDisplayName()));
                     }
                 } else {
-                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
+                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", target.getDisplayName()));
                 }
             } else {
-                player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+                player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", target.getDisplayName()));
             }
         } else {
             player.sendMessage(plugin.getMessage("NO_PERMISSION"));

@@ -2,63 +2,65 @@ package guilds.commands;
 
 import guilds.Guild;
 import guilds.GuildsBasic;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import guilds.Rank;
+import guilds.User;
+import java.util.logging.Level;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class CommandCreate {
 
-    private GuildsBasic GuildsBasic;
+    private GuildsBasic plugin;
 
-    public CommandCreate(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+    public CommandCreate(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 
-        this.GuildsBasic = GuildsBasic;
+        this.plugin = guildsBasic;
 
         if (sender instanceof Player) {
             Player(args, (Player) sender);
         } else {
             Console(args);
         }
-
     }
 
-    private void Player(String[] args, Player p) {
+    private void Player(String[] args, Player player) {
 
         if (args.length > 1) {
             StringBuilder guildName = new StringBuilder(args[1]);
             for (int arg = 2; arg < args.length; arg++) {
                 guildName.append(" ").append(args[arg]);
             }
-            if (p.hasPermission("guilds.admin.create")) {
-                Guild g = GuildsBasic.getGuild(guildName.toString());
-                if (g != null) {
-                    new Message(MessageType.GUILD_EXISTS, p, g, GuildsBasic);
+            if (player.hasPermission("guilds.admin.create")) {
+                Guild guild = plugin.getGuild(guildName.toString());
+                User user = plugin.getUser(player.getUniqueId());
+                if (guild != null) {
+                    player.sendMessage(plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()));
                 } else {
-                    Guild gld = new Guild();
-                    gld.setName(guildName.toString());
-                    gld.New(GuildsBasic);
-                    GuildsBasic.GuildsList.add(gld);
-                    gld.setBase(p.getLocation());
-                    Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Guilds");
-                    plugin.getLogger().info(gld.getName());
-                    GuildsBasic.saveGuilds();
-                    //GuildsBasic.loadGuilds();
-                    new Message(MessageType.GUILD_CREATED, p, gld, GuildsBasic);
+                    guild = new Guild();
+                    guild.setName(guildName.toString());
+                    guild.setLocation(player.getLocation());
+
+                    if (user == null) {
+                        user = new User(player.getUniqueId(), guild.getId(), Rank.LEAD.toString(), System.currentTimeMillis(), null);
+                        plugin.addPlayers(user);
+                        guild.setLead(player.getUniqueId());
+                        guild.addMember(user);
+                        player.sendMessage(plugin.getMessage("GUILD_LEADER").replaceAll("%guild%", guild.getName()));
+                    } else {
+                        if (user.haveGuild()) {
+                            player.sendMessage(plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()));
+                        }
+                    }
+                    plugin.addGuild(guild);
+                    plugin.getConfiguration().saveGuilds();
+                    player.sendMessage(plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()));
                 }
             } else {
-                new Message(MessageType.NO_PERMISSION, p, GuildsBasic);
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
         } else {
-            new Message(MessageType.COMMAND_CREATE, p, GuildsBasic);
+            player.sendMessage(plugin.getMessage("COMMAND_CREATE"));
         }
-
     }
 
     private void Console(String[] args) {
@@ -68,30 +70,20 @@ public class CommandCreate {
             for (int arg = 2; arg < args.length; arg++) {
                 guildName.append(" ").append(args[arg]);
             }
-            Guild guild = GuildsBasic.getGuild(guildName.toString());
+            Guild guild = plugin.getGuild(guildName.toString());
+
             if (guild != null) {
-                new Console(MessageType.GUILD_EXISTS, guild, GuildsBasic);
+                plugin.getLogger().log(Level.INFO, plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()).replaceAll("&([0-9a-fk-or])", ""));
             } else {
-                World w = null;
-                String world = "world";
-                w = Bukkit.getWorld(world);
-                if (w == null) {
-                    for (World wld : Bukkit.getWorlds()) {
-                        w = wld;
-                        break;
-                    }
-                }
-                Guild g = new Guild();
-                g.setName(guildName.toString());
-                g.New(GuildsBasic);
-                g.setBase(new Location(w, 0, 0, 0, 0, 0));
-                GuildsBasic.GuildsList.add(g);
-                GuildsBasic.saveGuilds();
-                GuildsBasic.loadGuilds();
-                new Console(MessageType.GUILD_CREATED, g, GuildsBasic);
+                guild = new Guild();
+                guild.setName(guildName.toString());
+                plugin.getLogger().log(Level.INFO, plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()).replaceAll("&([0-9a-fk-or])", ""));
+                plugin.addGuild(guild);
+                plugin.getConfiguration().saveGuilds();
+                plugin.getLogger().log(Level.INFO, plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()).replaceAll("&([0-9a-fk-or])", ""));
             }
         } else {
-            new Console(MessageType.COMMAND_CREATE, GuildsBasic);
+            plugin.getLogger().log(Level.INFO, plugin.getMessage("COMMAND_CREATE").replaceAll("&([0-9a-fk-or])", ""));
         }
 
     }

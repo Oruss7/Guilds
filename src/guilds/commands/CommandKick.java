@@ -1,82 +1,146 @@
 package guilds.commands;
 
+import guilds.Guild;
 import guilds.GuildsBasic;
+import guilds.Rank;
 import guilds.User;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandKick {
 
-	private GuildsBasic GuildsBasic;
-	
-	public CommandKick(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
-		
-		this.GuildsBasic = GuildsBasic;
-		
-		if (sender instanceof Player) {
-			Player(args, (Player) sender);
-		} else {
-			Console(args);
-		}
-		
-	}
-	
-	private void Player(String[] args, Player p) {
-		
-		if (args.length > 1) {
-			if (p.hasPermission("guilds.admin.kick")) {
-				Player player = User.getPlayer(args[1]);
-				if (player != null) {
-					if (GuildsBasic.getPlayerGuild(player) != null) {
-						GuildsBasic.getPlayerGuild(player).subtractOnline();
-					}
-					if (GuildsBasic.PlayerGuild.containsKey(player.getName())) {
-						GuildsBasic.PlayerGuild.remove(player.getName());
-                                                GuildsBasic.PlayerJoined.remove(player.getName());
-                                                GuildsBasic.PlayerRank.remove(player.getName());
-					}
-					GuildsBasic.savePlayers();
-					GuildsBasic.loadPlayers();
-					new Message(MessageType.PLAYER_REMOVED_FROM_GUILD, p, player, GuildsBasic);
-					if (!player.equals(p))
-							new Message(MessageType.YOU_REMOVED_FROM_GUILD, player, GuildsBasic);
-				} else {
-					new Message(MessageType.PLAYER_NOT_RECOGNISED, p, args[1], GuildsBasic);
-				}
-			} else {
-				new Message(MessageType.NO_PERMISSION, p, GuildsBasic);
-			}
-		} else {
-			new Message(MessageType.COMMAND_KICK, p, GuildsBasic);
-		}
-		
-	}
-	
-	private void Console(String[] args) {
-		
-		if (args.length > 1) {
-			Player player = User.getPlayer(args[1]);
-			if (player != null) {
-				if (GuildsBasic.getPlayerGuild(player) != null) {
-					GuildsBasic.getPlayerGuild(player).subtractOnline();
-				}
-				if (GuildsBasic.PlayerGuild.containsKey(args[1])) {
-					GuildsBasic.PlayerGuild.remove(args[1]);
-				}
-				GuildsBasic.savePlayers();
-				GuildsBasic.loadPlayers();
-				new Console(MessageType.PLAYER_REMOVED_FROM_GUILD, player, GuildsBasic);
-				new Message(MessageType.YOU_REMOVED_FROM_GUILD, player, GuildsBasic);
-			} else {
-				new Console(MessageType.PLAYER_NOT_RECOGNISED, args[1], GuildsBasic);
-			}
-		} else {
-			new Console(MessageType.COMMAND_KICK, GuildsBasic);
-		}
-		
-	}
-	
+    private GuildsBasic plugin;
+
+    public CommandKick(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
+
+        this.plugin = guildsBasic;
+
+        if (sender instanceof Player) {
+            Player(args, (Player) sender);
+        } else {
+            Console(args);
+        }
+    }
+
+    private void Player(String[] args, Player player) {
+
+        if (args.length >= 2) {
+
+            Guild guild;
+            if (args.length == 2) {
+                // pas de guilde = guilde du joueur actuel
+                User user = plugin.getUser(player.getUniqueId());
+                if (user == null || !user.haveGuild()) {
+                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
+                    return;
+                }
+                guild = plugin.getGuild(user.getGuild());
+            } else {
+                guild = plugin.getGuild(args[2]);
+                if (guild == null) {
+                    player.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
+                }
+            }
+
+            if (player.hasPermission("guilds.admin.kick")) {
+                OfflinePlayer oplayer = Bukkit.getOfflinePlayer(args[1]);
+                if (oplayer == null) {
+                    player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED"));
+                    return;
+                }
+
+                Player playerTarget = oplayer.getPlayer();
+
+                User userTarget = plugin.getUser(playerTarget.getUniqueId());
+                if (userTarget == null || !userTarget.getGuild().equals(guild.getId())) {
+                    player.sendMessage(plugin.getMessage("CAN_NOT_REMOVE"));
+                    return;
+                }
+
+                guild.removeMember(userTarget);
+                userTarget.setGuild(null);
+                userTarget.setJoined(null);
+                if (userTarget.getRank().equalsIgnoreCase(Rank.LEAD.toString())) {
+                    guild.setLead(null);
+                }
+                userTarget.setRank(null);
+                if (userTarget.getInvitation() == null) {
+                    plugin.removePlayer(userTarget);
+                }
+
+                for (User member : guild.getListMember()) {
+                    if (member.getOfflinePlayer().isOnline()) {
+                        member.getPlayer().sendMessage(plugin.getMessage("PLAYER_REMOVED_FROM_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%playerTarget%", playerTarget.getDisplayName()));
+                    }
+                }
+
+                if (playerTarget.isOnline()) {
+                    playerTarget.sendMessage(plugin.getMessage("YOU_REMOVED_FROM_GUILD").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));;
+                }
+
+                plugin.getConfiguration().savePlayers();
+
+            } else {
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
+            }
+        } else {
+            player.sendMessage(plugin.getMessage("COMMAND_KICK"));
+        }
+
+    }
+
+    private void Console(String[] args) {
+
+        if (args.length > 1) {
+            OfflinePlayer oplayer = Bukkit.getOfflinePlayer(args[1]);
+            if (oplayer == null) {
+                plugin.sendConsole(plugin.getMessage("PLAYER_NOT_RECOGNISED"));
+                return;
+            }
+
+            Guild guild = plugin.getGuild(args[2]);
+            if (guild == null) {
+                plugin.sendConsole(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
+            }
+
+            Player playerTarget = oplayer.getPlayer();
+
+            User userTarget = plugin.getUser(playerTarget.getUniqueId());
+            if (userTarget == null || !userTarget.getGuild().equals(guild.getId())) {
+                plugin.sendConsole(plugin.getMessage("CAN_NOT_REMOVE"));
+                return;
+            }
+
+            guild.removeMember(userTarget);
+            userTarget.setGuild(null);
+            userTarget.setJoined(null);
+            if (userTarget.getRank().equalsIgnoreCase(Rank.LEAD.toString())) {
+                guild.setLead(null);
+            }
+            userTarget.setRank(null);
+            if (userTarget.getInvitation() == null) {
+                plugin.removePlayer(userTarget);
+            }
+
+            for (User member : guild.getListMember()) {
+                if (member.getOfflinePlayer().isOnline()) {
+                    member.getPlayer().sendMessage(plugin.getMessage("PLAYER_REMOVED_FROM_GUILD").replaceAll("%player%", "Console").replaceAll("%playerTarget%", playerTarget.getDisplayName()));
+                }
+            }
+
+            if (playerTarget.isOnline()) {
+                playerTarget.sendMessage(plugin.getMessage("YOU_REMOVED_FROM_GUILD").replaceAll("%player", "Console").replaceAll("%guild%", guild.getName()));;
+            }
+
+            plugin.getConfiguration().savePlayers();
+            plugin.getConfiguration().saveGuilds();
+
+        } else {
+            plugin.sendConsole(plugin.getMessage("COMMAND_KICK"));
+        }
+
+    }
+
 }
