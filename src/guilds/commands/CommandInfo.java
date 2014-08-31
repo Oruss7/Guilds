@@ -3,71 +3,101 @@ package guilds.commands;
 import guilds.Guild;
 import guilds.GuildsBasic;
 import guilds.User;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandInfo {
 
-    private GuildsBasic GuildsBasic;
+    private GuildsBasic plugin;
 
-    public CommandInfo(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+    public CommandInfo(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 
-        this.GuildsBasic = GuildsBasic;
+        this.plugin = guildsBasic;
 
         if (sender instanceof Player) {
             Player(args, (Player) sender);
         } else {
             Console(args);
         }
-
     }
 
     private void Player(String[] args, Player player) {
 
         if (player.hasPermission("guilds.user.info")) {
 
-            if (!(args.length > 1)) {
-                new Message(MessageType.COMMAND_INFO, player, GuildsBasic);
-                return;
-            }
+            Player target;
 
-            Player target = User.getPlayer(args[1]);
+            if (!(args.length > 1)) {
+                target = player;
+            } else {
+                target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+            }
 
             if (target != null) {
-                if (GuildsBasic.PlayerGuild.containsKey(target.getName())) {
-                    Timestamp stamp = new Timestamp(GuildsBasic.getPlayerJoined(target));
-                    Date date = new Date(stamp.getTime());
-                    SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-                    GuildsBasic.sendMessage(player,"&e==================================");
-                    GuildsBasic.sendMessage(player,"&9" + target.getDisplayName());
-                    GuildsBasic.sendMessage(player,"Guilde : " + GuildsBasic.getPlayerGuild(target).getName());
-                    GuildsBasic.sendMessage(player,"Date d'entrée : " + dt.format(date));
-                    GuildsBasic.sendMessage(player,"&e==================================");
+                User user = plugin.getUser(target.getUniqueId());
+                if (user != null) {
+                    Guild guild = plugin.getGuild(user.getGuild());
+                    if (guild != null) {
+                        Timestamp stamp = new Timestamp(user.getJoined());
+                        Date date = new Date(stamp.getTime());
+                        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                        player.sendMessage(ChatColor.YELLOW+ "==================================");
+                        player.sendMessage(ChatColor.AQUA + target.getDisplayName());
+                        player.sendMessage(ChatColor.AQUA + plugin.getMessage("GUILD") + " : " + guild.getName());
+                        player.sendMessage(ChatColor.AQUA + plugin.getMessage("RANK") + " : " + user.getRank());
+                        player.sendMessage(ChatColor.AQUA + plugin.getMessage("JOINED") + " : " + dt.format(date));
+                        player.sendMessage(ChatColor.YELLOW+ "==================================");
+                    } else {
+                        player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
+                    }
+                } else {
+                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
                 }
-            }else {
-                new Message(MessageType.PLAYER_NOT_RECOGNISED, player, args[1], GuildsBasic);
+            } else {
+                player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
             }
         } else {
-            new Message(MessageType.NO_PERMISSION, player, GuildsBasic);
+            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 
     private void Console(String[] args) {
 
-        String msg = "";
-        for (Guild g : GuildsBasic.GuildsList) {
-            if (msg == "") {
-                msg = g.getName();
-            } else {
-                msg = msg + ", " + g.getName();
-            }
+        if (!(args.length > 1)) {
+             plugin.sendConsole( plugin.getMessage("COMMAND_INFO").replaceAll("&([0-9a-fk-or])", ""));
+             return;
         }
-        GuildsBasic.sendConsole(msg + ".");
-
+        
+        Player target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+       
+        if (target != null) {
+                User user = plugin.getUser(target.getUniqueId());
+                if (user != null) {
+                    Guild guild = plugin.getGuild(user.getGuild());
+                    if (guild != null) {
+                        Timestamp stamp = new Timestamp(user.getJoined());
+                        Date date = new Date(stamp.getTime());
+                        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                        plugin.sendConsole(  "==================================");
+                        plugin.sendConsole( target.getDisplayName());
+                        plugin.sendConsole( plugin.getMessage("GUILD") + " : " + guild.getName());
+                        plugin.sendConsole( plugin.getMessage("RANK") + " : " + user.getRank());
+                        plugin.sendConsole( plugin.getMessage("JOINED") + " : " + dt.format(date));
+                        plugin.sendConsole(  "==================================");
+                    } else {
+                        plugin.sendConsole( plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
+                    }
+                } else {
+                    plugin.sendConsole( plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
+                }
+            } else {
+                plugin.sendConsole( plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+            }
     }
 }
