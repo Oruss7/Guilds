@@ -18,7 +18,7 @@ public class CommandLeave {
         if (sender instanceof Player) {
             Player(args, (Player) sender);
         } else {
-            Console(args);
+            plugin.sendConsole(plugin.getMessage("CONSOLE_ERROR"));
         }
     }
 
@@ -63,11 +63,4 @@ public class CommandLeave {
             player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
-
-    private void Console(String[] args) {
-
-        plugin.sendConsole(plugin.getMessage("CONSOLE_ERROR"));
-
-    }
-
 }

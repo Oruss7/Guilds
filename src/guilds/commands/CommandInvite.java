@@ -2,148 +2,158 @@ package guilds.commands;
 
 import guilds.Guild;
 import guilds.GuildsBasic;
+import guilds.Rank;
 import guilds.User;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
-import guilds.utilities.Settings;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandInvite {
 
-    private GuildsBasic GuildsBasic;
+    private GuildsBasic plugin;
 
-    public CommandInvite(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+    public CommandInvite(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 
-        this.GuildsBasic = GuildsBasic;
+        this.plugin = guildsBasic;
 
         if (sender instanceof Player) {
             Player(args, (Player) sender);
         } else {
             Console(args);
         }
-
     }
 
     private void Player(String[] args, Player player) {
 
         if (args[0].equalsIgnoreCase("invite")) {
-            Player playerTarget = User.getPlayer(args[1]);
-            Guild guild = GuildsBasic.getPlayerGuild(player);
 
-            if (guild == null) {
-                new Message(MessageType.NOT_IN_GUILD, player, GuildsBasic);
-                return;
-            }
             if (args.length < 2) {
-                new Message(MessageType.COMMAND_INVITE, player, GuildsBasic);
+                player.sendMessage(plugin.getMessage("COMMAND_INVITE"));
                 return;
             }
 
             if (!player.hasPermission("guilds.user.invite")) {
-                new Message(MessageType.NO_PERMISSION, player, GuildsBasic);
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
                 return;
             }
+
+            User user = plugin.getUser(player.getUniqueId());
+            if (user == null) {
+                player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
+                return;
+            }
+
+            if (user.getGuild() == null || !user.haveGuild()) {
+                player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
+                return;
+            }
+
+            Guild guild = plugin.getGuild(user.getGuild());
+
+            OfflinePlayer playerTarget = Bukkit.getOfflinePlayer(args[1]);
 
             if (playerTarget == null) {
-                new Message(MessageType.PLAYER_NOT_RECOGNISED, player, args[1], GuildsBasic);
+                player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 return;
             }
 
-            if (GuildsBasic.getPlayerGuild(playerTarget) != null) {
-                new Message(MessageType.ALREADY_IN_GUILD, player, player, GuildsBasic);
+            User userTarget = plugin.getUser(playerTarget.getUniqueId());
+
+            if (userTarget == null) {
+                // joueur non enregistré
+                userTarget = new User(playerTarget);
+                plugin.addPlayers(userTarget);
+            } else if (userTarget.haveGuild()) {
+                // joueur enregistré
+                player.sendMessage(plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", plugin.getGuild(userTarget.getGuild()).getName()));
                 return;
             }
 
-            String currentGuildPending = GuildsBasic.getPlayerPending(playerTarget);
-            if (currentGuildPending != null) {
-                new Message(MessageType.ALREADY_PENDING, player, currentGuildPending, GuildsBasic);
+            if (userTarget.getInvitation() != null) {
+                player.sendMessage(plugin.getMessage("ALREADY_PENDING").replaceAll("%guild%", plugin.getGuild(userTarget.getInvitation()).getName()));
+                return;
+            }
+            // envois de l'invitation
+            userTarget.setInvitation(guild.getId());
+
+            if (playerTarget.isOnline()) {
+                playerTarget.getPlayer().sendMessage(plugin.getMessage("INVITATION").replaceAll("%player%", player.getName().replaceAll("%guild%", guild.getName())));
             }
 
-            GuildsBasic.setPlayerPending(playerTarget, guild);
-
-            GuildsBasic.savePlayers();
-            GuildsBasic.loadPlayers();
-            new Message(MessageType.INVITATION, playerTarget, guild, GuildsBasic);
-            new Message(MessageType.PLAYER_INVITED, player, playerTarget, GuildsBasic);
+            for (User member : guild.getListMember()) {
+                if (member.getOfflinePlayer().isOnline()) {
+                    member.getPlayer().sendMessage(plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName().replaceAll("%guild%", guild.getName())));
+                }
+            }
+            plugin.getConfiguration().savePlayers();
         }
 
         if (args[0].equalsIgnoreCase("accept")) {
 
-            String guildName = GuildsBasic.getPlayerPending(player);
-            if (guildName == null) {
-                new Message(MessageType.NO_PENDING, player, GuildsBasic);
+            User user = plugin.getUser(player.getUniqueId());
+            if (user == null || user.getInvitation() == null) {
+                player.sendMessage(plugin.getMessage("NO_PENDING"));
+                return;
+            }
+
+            if (user.haveGuild()) {
+                player.sendMessage(plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%guild%", plugin.getGuild(user.getGuild()).getName()));
                 return;
             }
 
             if (!player.hasPermission("guilds.user.join")) {
-                new Message(MessageType.NO_PERMISSION, player, GuildsBasic);
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
                 return;
             }
 
-            Guild guild = GuildsBasic.getGuild(guildName);
+            Guild guild = plugin.getGuild(user.getInvitation());
             if (guild == null) {
-                new Message(MessageType.GUILD_NOT_RECOGNISED, player, guildName, GuildsBasic);
-            }
-
-            if (!GuildsBasic.getEnabled(Settings.ENABLE_CHANGE_GUILD)) {
-                new Message(MessageType.GUILD_CHOSEN, player, player, GuildsBasic);
+                player.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED"));
                 return;
             }
 
-            if (GuildsBasic.getPlayerGuild(player) != null) {
-                new Message(MessageType.ALREADY_IN_GUILD, player, player, GuildsBasic);
-                return;
+            user.setGuild(guild.getId());
+            user.setJoined(System.currentTimeMillis());
+            user.setInvitation(null);
+            user.setRank(Rank.NEWBIE.toString());
+            guild.addMember(user);
+
+            for (User member : guild.getListMember()) {
+                if (member.getOfflinePlayer().isOnline()) {
+                    member.getPlayer().sendMessage(plugin.getMessage("GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
+                }
             }
-
-            if (GuildsBasic.PlayerGuild.containsKey(player.getName())) {
-                GuildsBasic.PlayerGuild.remove(player.getName());
-            }
-
-            if (GuildsBasic.PlayerJoined.containsKey(player.getName())) {
-                GuildsBasic.PlayerJoined.remove(player.getName());
-            }
-
-            GuildsBasic.PlayerGuild.put(player.getName(), guild);
-            GuildsBasic.PlayerJoined.put(player.getName(), System.currentTimeMillis());
-            GuildsBasic.PlayerPending.remove(player.getName());
-            GuildsBasic.PlayerRank.put(player.getName(), "Recrue");
-
-            GuildsBasic.savePlayers();
-            GuildsBasic.loadPlayers();
-
-            new Message(MessageType.GUILD_JOIN, player, player, guild, GuildsBasic);
-
+            plugin.getConfiguration().savePlayers();
         }
 
         if (args[0].equalsIgnoreCase("deny")) {
-            String guildName = GuildsBasic.getPlayerPending(player);
-            if (guildName == null) {
-                new Message(MessageType.NO_PENDING, player, GuildsBasic);
+            User user = plugin.getUser(player.getUniqueId());
+            if (user == null || user.getInvitation() == null) {
+                player.sendMessage(plugin.getMessage("NO_PENDING"));
                 return;
             }
 
-            GuildsBasic.PlayerPending.remove(player.getName());
-            Guild guild = GuildsBasic.getGuild(guildName);
-            String leadName = guild.getLead();
-            if (leadName != null) {
-                Player lead = User.getPlayer(leadName);
-                if (lead != null && lead.isOnline()) {
-                    new Message(MessageType.INVITATION_DENY, lead, GuildsBasic);
+            Guild guild = plugin.getGuild(user.getInvitation());
+            if (guild == null) {
+                player.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED"));
+                return;
+            }
+
+            player.sendMessage(plugin.getMessage("YOU_DENY_INVITATION").replace("%guild%", guild.getName()));
+
+            for (User member : guild.getListMember()) {
+                if (member.getOfflinePlayer().isOnline()) {
+                    member.getPlayer().sendMessage(plugin.getMessage("INVITATION_DENY").replace("%player%",player.getDisplayName()));
                 }
             }
             
-            GuildsBasic.savePlayers();
-            GuildsBasic.loadPlayers();
-
+            plugin.removePlayer(user);
+            plugin.getConfiguration().savePlayers();
         }
     }
 
     private void Console(String[] args) {
-
-        new Console(MessageType.CONSOLE_ERROR, GuildsBasic);
-
+        plugin.sendConsole(plugin.getMessage("CONSOLE_ERROR"));
     }
-
 }

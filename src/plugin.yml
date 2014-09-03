@@ -1,6 +1,6 @@
 name: Guilds
 main: guilds.GuildsBasic
-version: 1.0.0
+version: 2.0.0
 author: largo7
 website: http://eredrim.fr
 softdepend: [WorldGuard]
@@ -20,9 +20,6 @@ permissions:
         description: Gives access to all guilds commands
         children:
             guilds.admin.kick: true
-            guilds.admin.toggle: true
-            guilds.admin.settings: true
-            guilds.admin.setting: true
             guilds.admin.messages: true
             guilds.user.join: true
             guilds.user.list: true
@@ -30,26 +27,27 @@ permissions:
             guilds.admin.remove: true
             guilds.admin.create: true
             guilds.user.base: true
-            guilds.user.chat: true
             guilds.admin.setbase: true
             guilds.admin.save: true
             guilds.admin.load: true
             guilds.user.leave: true
             guilds.user.chat: true
             guilds.user.info: true
+            guilds.admin.promote: true
+            guilds.admin.demote: true
+            guilds.user.invite: true
     guilds.admin.*:
         description: Gives access to all guilds admin commands
         children:
             guilds.admin.kick: true
-            guilds.admin.toggle: true
-            guilds.admin.settings: true
-            guilds.admin.setting: true
             guilds.admin.add: true
             guilds.admin.remove: true
             guilds.admin.create: true
             guilds.admin.setbase: true
             guilds.admin.save: true
             guilds.admin.load: true
+            guilds.admin.promote: true
+            guilds.admin.demote: true
     guilds.user.*:
         description: Gives access to all guilds user commands
         children:
@@ -59,19 +57,14 @@ permissions:
             guilds.user.leave: true
             guilds.user.chat: true
             guilds.user.info: true
+            guilds.user.invite: true
     guilds.admin.kick:
         description: Permission
         default: op
-    guilds.admin.settings:
+    guilds.admin.promote:
         description: Permission
         default: op
-    guilds.admin.toggle:
-        description: Permission
-        default: op
-    guilds.admin.setting:
-        description: Permission
-        default: op
-    guilds.admin.messages:
+    guilds.admin.demote:
         description: Permission
         default: op
     guilds.admin.leave:
@@ -108,5 +101,8 @@ permissions:
         description: Permission
         default: true
     guilds.user.info:
+        description: Permission
+        default: true   
+    guilds.user.invite:
         description: Permission
         default: true

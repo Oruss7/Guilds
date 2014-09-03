@@ -3,20 +3,17 @@ package guilds.commands;
 import guilds.Guild;
 import guilds.GuildsBasic;
 import guilds.User;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
-import java.util.Map;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 class CommandChat {
 
-    private GuildsBasic GuildsBasic;
+    private GuildsBasic plugin;
 
-    public CommandChat(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+    public CommandChat(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 
-        this.GuildsBasic = GuildsBasic;
+        this.plugin = guildsBasic;
 
         if (sender instanceof Player) {
             Player(args, (Player) sender);
@@ -25,37 +22,37 @@ class CommandChat {
         }
     }
 
-    private void Player(String[] args, Player p) {
+    private void Player(String[] args, Player player) {
 
-        if (p.hasPermission("guilds.user.chat")) {
-            Guild g = GuildsBasic.getPlayerGuild(p);
-            if (g != null) {
-                StringBuilder message = new StringBuilder();
-                for (int i = 0; i < args.length; i++) {
-                    message = message.append(" ").append(args[i]);
-                }
-                
-                for (Map.Entry<String, Guild> es : GuildsBasic.PlayerGuild.entrySet()) {
-                    Guild guild = es.getValue();
-                    if (guild != null && guild.getName().equalsIgnoreCase(g.getName())) {
-                        Player player = User.getPlayer(es.getKey());
-                        if(player != null && player.isOnline()){
-                            GuildsBasic.sendMessage(player, p.getDisplayName() + ":&f "+ message.toString());
+        if (player.hasPermission("guilds.user.chat")) {
+            User user = plugin.getUser(player.getUniqueId());
+            if (user != null) {
+                Guild guild = plugin.getGuild(user.getGuild());
+                if (guild != null) {
+                    StringBuilder message = new StringBuilder();
+                    for (int i = 0; i < args.length; i++) {
+                        message = message.append(" ").append(args[i]);
+                    }
+
+                    for (User member : guild.getListMember()) {
+                        if (member != null && member.getPlayer() != null && member.getPlayer().isOnline()) {
+                            member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN+"["+plugin.getMessage("GUILD")+ChatColor.GREEN+"] " + ChatColor.WHITE + player.getDisplayName() + ":"+ChatColor.WHITE+ message.toString()));
                         }
                     }
+                } else {
+                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
                 }
-
             } else {
-                new Message(MessageType.NOT_IN_GUILD, p, GuildsBasic);
+                player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
             }
         } else {
-            new Message(MessageType.NO_PERMISSION, p, GuildsBasic);
+            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 
     private void Console(String[] args) {
 
-        new Console(MessageType.CONSOLE_ERROR, GuildsBasic);
+        plugin.sendConsole(plugin.getMessage("CONSOLE_ERROR"));
 
     }
 }

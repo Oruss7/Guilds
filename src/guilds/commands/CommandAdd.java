@@ -71,9 +71,8 @@ public class CommandAdd {
 
                             plugin.getConfiguration().savePlayers();
 
-                            sender.sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
-                            for(User member : guild.getListMember()){
-                                if(member.getPlayer().isOnline() && !member.getPlayer().equals(player)){
+                            for (User member : guild.getListMember()) {
+                                if (member.getOfflinePlayer().isOnline()) {
                                     member.getPlayer().sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                                 }
                             }
@@ -97,7 +96,7 @@ public class CommandAdd {
         if (args.length > 2) {
             OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
             if (!opl.isOnline()) {
-                plugin.sendConsole( plugin.getMessage("PLAYER_OFFLINE").replaceAll("%player%", args[1]));
+                plugin.sendConsole(plugin.getMessage("PLAYER_OFFLINE").replaceAll("%player%", args[1]));
             } else {
                 Player player = opl.getPlayer();
                 if (player != null) {
@@ -108,7 +107,7 @@ public class CommandAdd {
                             // joueur est déjà présent
                             if (user.haveGuild()) {
                                 // joueur déjà guildé  
-                                plugin.sendConsole( plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", plugin.getGuild(user.getGuild()).getName()));
+                                plugin.sendConsole(plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", plugin.getGuild(user.getGuild()).getName()));
                                 return;
                             } else {
                                 // joueur non guildé
@@ -129,18 +128,22 @@ public class CommandAdd {
 
                         plugin.getConfiguration().savePlayers();
 
-                        plugin.sendConsole( plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
-                        player.sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
+                        plugin.sendConsole(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
+                        for (User member : guild.getListMember()) {
+                            if (member.getOfflinePlayer().isOnline()) {
+                                member.getPlayer().sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
+                            }
+                        }
 
                     } else {
-                        plugin.sendConsole( plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
+                        plugin.sendConsole(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                     }
                 } else {
-                    plugin.sendConsole( plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+                    plugin.sendConsole(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 }
             }
         } else {
-            plugin.sendConsole( plugin.getMessage("COMMAND_ADD"));
+            plugin.sendConsole(plugin.getMessage("COMMAND_ADD"));
         }
     }
 }

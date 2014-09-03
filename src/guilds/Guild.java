@@ -2,104 +2,107 @@ package guilds;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 public class Guild {
 
-    private int ONLINE;
+    private UUID id;
+    private String name;
+    private UUID lead;
+    private String color;
+    private String playerPrefix;
+    private String playerSuffix;
+    private Location location;
+    // liste des membres (utile pour le tchat de guilde)
+    private List<User> listMember;
 
-    private String NAME;
-    private String lead;
-    private String COLOR;
-    private String PLAYER_PREFIX;
-    private String PLAYER_SUFFIX;
 
-    private Location LOCATION;
+    public Guild() {
+        id = UUID.randomUUID();
 
-    private List<World> WORLDS = new ArrayList<>();
-
-    public void New(GuildsBasic GuildsBasic) {
-        setColor("");
-        setPlayerPrefix("");
-        setPlayerSuffix("");
+        listMember = new ArrayList<>();
     }
 
-    public int getOnline() {
-        return ONLINE;
+    public Guild(UUID id, String name, UUID lead, String color, String prefix, String suffix, Location location) {
+        this.id = id;
+        this.name = name;
+        this.lead = lead;
+        this.color = color;
+        this.playerPrefix = prefix;
+        this.playerSuffix = suffix;
+        this.location = location;
+
+        listMember = new ArrayList<>();
     }
 
-    public void addOnline() {
-        ONLINE++;
-    }
-
-    public void subtractOnline() {
-        ONLINE--;
-    }
-
-    public List<World> getWorlds() {
-        return WORLDS;
-    }
-
-    public void addWorld(World w) {
-        WORLDS.add(w);
-    }
-
-    public void removeWorld(World w) {
-        WORLDS.remove(w);
-    }
-
-    public Location getBase() {
-        return LOCATION;
-    }
-
-    public void setBase(Location l) {
-        LOCATION = l;
-    }
-
-    public void setBaseWorld(World w) {
-        LOCATION.setWorld(w);
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {
-        return NAME;
+        return name;
     }
 
-    public void setName(String NAME) {
-        this.NAME = NAME;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getColor() {
-        return COLOR;
-    }
-
-    public void setColor(String COLOR) {
-        this.COLOR = COLOR;
-    }
-
-    public String getPlayerPrefix() {
-        return PLAYER_PREFIX;
-    }
-
-    public void setPlayerPrefix(String PLAYER_PREFIX) {
-        this.PLAYER_PREFIX = PLAYER_PREFIX;
-    }
-
-    public String getPlayerSuffix() {
-        return PLAYER_SUFFIX;
-    }
-
-    public void setPlayerSuffix(String PLAYER_SUFFIX) {
-        this.PLAYER_SUFFIX = PLAYER_SUFFIX;
-    }
-
-    public String getLead() {
+    public UUID getLead() {
         return lead;
     }
 
-    public void setLead(String lead) {
+    public void setLead(UUID lead) {
         this.lead = lead;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getPlayerPrefix() {
+        return playerPrefix;
+    }
+
+    public void setPlayerPrefix(String playerPrefix) {
+        this.playerPrefix = playerPrefix;
+    }
+
+    public String getPlayerSuffix() {
+        return playerSuffix;
+    }
+
+    public void setPlayerSuffix(String playerSuffix) {
+        this.playerSuffix = playerSuffix;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void addMember(User member) {
+        if (!listMember.contains(member)) {
+            listMember.add(member);
+        }
+    }
+
+    public void removeMember(User member) {
+        if (listMember.contains(member)) {
+            listMember.remove(member);
+            
+        }
+    }
+
+    public List<User> getListMember() {
+        return listMember;
     }
 
 }

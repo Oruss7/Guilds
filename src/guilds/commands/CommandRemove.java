@@ -2,20 +2,17 @@ package guilds.commands;
 
 import guilds.Guild;
 import guilds.GuildsBasic;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
-import java.util.Map;
+import guilds.User;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandRemove {
 
-    private GuildsBasic GuildsBasic;
+    private GuildsBasic plugin;
 
-    public CommandRemove(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+    public CommandRemove(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 
-        this.GuildsBasic = GuildsBasic;
+        this.plugin = guildsBasic;
 
         if (sender instanceof Player) {
             Player(args, (Player) sender);
@@ -24,38 +21,43 @@ public class CommandRemove {
         }
     }
 
-    private void Player(String[] args, Player p) {
+    private void Player(String[] args, Player player) {
 
-        if (args[0].equalsIgnoreCase("remove")) {
-            if (args.length > 1) {
-                StringBuilder guildName = new StringBuilder(args[1]);
-                for (int arg = 2; arg < args.length; arg++) {
-                    guildName.append(" ").append(args[arg]);
-                }
-                if (p.hasPermission("guilds.admin.remove")) {
-                    Guild guild = GuildsBasic.getGuild(guildName.toString());
-                    if (guild != null) {
-                        boolean removed = GuildsBasic.GuildsList.remove(guild);
-                        if (!removed) {
-                            new Message(MessageType.GUILD_NOT_RECOGNISED, p, guildName.toString(), GuildsBasic);
-                        } else {
-                            new Message(MessageType.GUILD_DELETED, p, guild, GuildsBasic);
-
-                            GuildsBasic.saveGuilds();
-                            GuildsBasic.savePlayers();
-                            GuildsBasic.loadGuilds();
-                            GuildsBasic.loadPlayers();
+        if (args.length > 1) {
+            StringBuilder guildName = new StringBuilder(args[1]);
+            for (int arg = 2; arg < args.length; arg++) {
+                guildName.append(" ").append(args[arg]);
+            }
+            if (player.hasPermission("guilds.admin.remove")) {
+                Guild guild = plugin.getGuild(guildName.toString());
+                if (guild != null) {
+                    for (User member : guild.getListMember()) {
+                        if (member.getOfflinePlayer().isOnline()) {
+                            member.getPlayer().sendMessage(plugin.getMessage("GUILD_DELETED").replaceAll("%guild%", guildName.toString()));
                         }
-                    } else {
-                        new Message(MessageType.GUILD_NOT_RECOGNISED, p, guildName.toString(), GuildsBasic);
+                            member.setGuild(null);
+                            member.setJoined(null);
+                            member.setRank(null);
+                        if (member.getInvitation() == null) {
+                            plugin.removePlayer(member);
+                        }
                     }
+
+                    plugin.removeGuild(guild);
+
+                    plugin.getConfiguration().saveGuilds();
+                    plugin.getConfiguration().savePlayers();
+
                 } else {
-                    new Message(MessageType.NO_PERMISSION, p, GuildsBasic);
+                    player.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", guildName.toString()));
                 }
             } else {
-                new Message(MessageType.COMMAND_REMOVE, p, GuildsBasic);
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
+        } else {
+            player.sendMessage(plugin.getMessage("COMMAND_REMOVE"));
         }
+
     }
 
     private void Console(String[] args) {
@@ -65,19 +67,29 @@ public class CommandRemove {
             for (int arg = 2; arg < args.length; arg++) {
                 guildName.append(" ").append(args[arg]);
             }
-            Guild guild = GuildsBasic.getGuild(guildName.toString());
+
+            Guild guild = plugin.getGuild(guildName.toString());
             if (guild != null) {
-                GuildsBasic.GuildsList.remove(guild);
-                new Console(MessageType.GUILD_DELETED, guild, GuildsBasic);
-                GuildsBasic.saveGuilds();
-                GuildsBasic.loadGuilds();
-                GuildsBasic.savePlayers();
-                GuildsBasic.loadPlayers();
+                for (User member : guild.getListMember()) {
+                    if (member.getOfflinePlayer().isOnline()) {
+                        member.getPlayer().sendMessage(plugin.getMessage("GUILD_DELETED").replaceAll("%guild%", guildName.toString()));
+                    }
+                    guild.removeMember(member);
+                    if (member.getInvitation() == null) {
+                        plugin.removePlayer(member);
+                    }
+                }
+
+                plugin.removeGuild(guild);
+
+                plugin.getConfiguration().saveGuilds();
+                plugin.getConfiguration().savePlayers();
+
             } else {
-                new Console(MessageType.GUILD_NOT_RECOGNISED, guildName.toString(), GuildsBasic);
+                plugin.sendConsole(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild", guildName.toString()));
             }
         } else {
-            new Console(MessageType.COMMAND_REMOVE, GuildsBasic);
+            plugin.sendConsole(plugin.getMessage("COMMAND_REMOVE"));
         }
 
     }

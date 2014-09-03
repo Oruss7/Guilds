@@ -1,53 +1,42 @@
 package guilds.commands;
 
 import guilds.GuildsBasic;
-import guilds.messages.Console;
-import guilds.messages.Message;
-import guilds.messages.MessageType;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CommandLoad {
 
-	private GuildsBasic GuildsBasic;
+	private GuildsBasic plugin;
 	
-	public CommandLoad(CommandSender sender, String[] args, GuildsBasic GuildsBasic) {
+	public CommandLoad(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
 		
-		this.GuildsBasic = GuildsBasic;
+		this.plugin = guildsBasic;
 		
 		if (sender instanceof Player) {
 			Player(args, (Player) sender);
 		} else {
 			Console(args);
-		}
-		
+		}		
 	}
 	
 	private void Player(String[] args, Player player) {
 		
 		if (player.hasPermission("guilds.admin.load")) {
-			GuildsBasic.loadGuilds();
-			GuildsBasic.loadPlayers();
-			GuildsBasic.loadSettings();
-			GuildsBasic.loadMessages();
-			GuildsBasic.clearScheduler();
-			new Message(MessageType.LOAD, player, GuildsBasic);
+			plugin.getConfiguration().start();			
+			plugin.clearScheduler();
+			player.sendMessage(plugin.getMessage("LOAD"));
 		} else {
-			new Message(MessageType.NO_PERMISSION, player, GuildsBasic);
-		}
-		
+			player.sendMessage(plugin.getMessage("NO_PERMISSION"));
+		}		
 	}
 	
 	private void Console(String[] args) {
 		
-		GuildsBasic.loadGuilds();
-		GuildsBasic.loadPlayers();
-		GuildsBasic.loadSettings();
-		GuildsBasic.loadMessages();
-		GuildsBasic.clearScheduler();
+		plugin.getConfiguration().start();
+		plugin.clearScheduler();
 		
-		new Console(MessageType.LOAD, GuildsBasic);
+		plugin.sendConsole(plugin.getMessage("LOAD"));
 		
 	}
 	
