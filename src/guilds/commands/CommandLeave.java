@@ -23,44 +23,45 @@ public class CommandLeave {
     }
 
     private void Player(String[] args, Player player) {
-
-        if (player.hasPermission("guilds.user.leave")) {
-            if (plugin.getConfig().getBoolean("config.ENABLE_CHANGE_GUILD")) {
-
-                User user = plugin.getUser(player.getUniqueId());
-                if (user == null || !user.haveGuild()) {
-                    player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
-                    return;
-                }
-
-                Guild guild = plugin.getGuild(user.getGuild());
-
-                guild.removeMember(user);
-                user.setGuild(null);
-                user.setJoined(null);
-                if(user.getRank().equalsIgnoreCase(Rank.LEAD.toString())){
-                    guild.setLead(null);
-                }
-                user.setRank(null);
-                if (user.getInvitation() == null) {
-                    plugin.removePlayer(user);
-                }
-
-                plugin.getConfiguration().savePlayers();
-
-                for (User member : guild.getListMember()) {
-                    if (member.getOfflinePlayer().isOnline()) {
-                        member.getPlayer().sendMessage(plugin.getMessage("GUILD_AS_LEAVE").replaceAll("%player%", player.getDisplayName()));
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.user.leave")) {
+                if (plugin.getConfig().getBoolean("config.ENABLE_CHANGE_GUILD")) {
+    
+                    User user = plugin.getUser(player.getUniqueId());
+                    if (user == null || !user.haveGuild()) {
+                        player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
+                        return;
                     }
+    
+                    Guild guild = plugin.getGuild(user.getGuild());
+    
+                    guild.removeMember(user);
+                    user.setGuild(null);
+                    user.setJoined(null);
+                    if(user.getRank().equalsIgnoreCase(Rank.LEAD.toString())){
+                        guild.setLead(null);
+                    }
+                    user.setRank(null);
+                    if (user.getInvitation() == null) {
+                        plugin.removePlayer(user);
+                    }
+    
+                    plugin.getConfiguration().savePlayers();
+    
+                    for (User member : guild.getListMember()) {
+                        if (member.getOfflinePlayer().isOnline()) {
+                            member.getPlayer().sendMessage(plugin.getMessage("GUILD_AS_LEAVE").replaceAll("%player%", player.getDisplayName()));
+                        }
+                    }
+    
+                    player.sendMessage(plugin.getMessage("GUILD_LEAVE").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));;
+    
+                } else {
+                    player.sendMessage(plugin.getMessage("GUILD_CHOSEN"));
                 }
-
-                player.sendMessage(plugin.getMessage("GUILD_LEAVE").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));;
-
             } else {
-                player.sendMessage(plugin.getMessage("GUILD_CHOSEN"));
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 }
