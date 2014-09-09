@@ -36,7 +36,7 @@ class CommandChat {
                         }
     
                         for (User member : guild.getListMember()) {
-                            if (member != null && member.getPlayer() != null && member.getPlayer().isOnline()) {
+                            if (member != null && member.getPlayer() != null && member.getPlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName()))) {
                                 member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN+"["+plugin.getMessage("GUILD")+ChatColor.GREEN+"] " + ChatColor.WHITE + player.getDisplayName() + ":"+ChatColor.WHITE+ message.toString()));
                             }
                         }
