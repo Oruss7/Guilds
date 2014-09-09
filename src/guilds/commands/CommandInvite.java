@@ -77,12 +77,12 @@ public class CommandInvite {
                 // envois de l'invitation
                 userTarget.setInvitation(guild.getId());
     
-                if (playerTarget.isOnline()) {
+                if (playerTarget.isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(playerTarget.getPlayer.getWorld().getName())) {
                     playerTarget.getPlayer().sendMessage(plugin.getMessage("INVITATION").replaceAll("%player%", player.getName().replaceAll("%guild%", guild.getName())));
                 }
     
                 for (User member : guild.getListMember()) {
-                    if (member.getOfflinePlayer().isOnline()) {
+                    if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                         member.getPlayer().sendMessage(plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName().replaceAll("%guild%", guild.getName())));
                     }
                 }
@@ -120,7 +120,7 @@ public class CommandInvite {
                 guild.addMember(user);
     
                 for (User member : guild.getListMember()) {
-                    if (member.getOfflinePlayer().isOnline()) {
+                    if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                         member.getPlayer().sendMessage(plugin.getMessage("GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                     }
                 }
@@ -143,7 +143,7 @@ public class CommandInvite {
                 player.sendMessage(plugin.getMessage("YOU_DENY_INVITATION").replace("%guild%", guild.getName()));
     
                 for (User member : guild.getListMember()) {
-                    if (member.getOfflinePlayer().isOnline()) {
+                    if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                         member.getPlayer().sendMessage(plugin.getMessage("INVITATION_DENY").replace("%player%",player.getDisplayName()));
                     }
                 }
