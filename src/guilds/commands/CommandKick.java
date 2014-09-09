@@ -71,12 +71,12 @@ public class CommandKick {
                     }
     
                     for (User member : guild.getListMember()) {
-                        if (member.getOfflinePlayer().isOnline()) {
+                        if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                             member.getPlayer().sendMessage(plugin.getMessage("PLAYER_REMOVED_FROM_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%playerTarget%", playerTarget.getDisplayName()));
                         }
                     }
     
-                    if (playerTarget.isOnline()) {
+                    if (playerTarget.isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(playerTarget.getPlayer.getWorld().getName())) {
                         playerTarget.sendMessage(plugin.getMessage("YOU_REMOVED_FROM_GUILD").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));;
                     }
     
