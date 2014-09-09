@@ -29,42 +29,45 @@ public class CommandInfo {
     }
 
     private void Player(String[] args, Player player) {
+        
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
 
-        if (player.hasPermission("guilds.user.info")) {
-
-            OfflinePlayer target;
-
-            if (!(args.length > 1)) {
-                target = player;
-            } else {
-                target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
-            }
-
-            if (target != null) {
-                User user = plugin.getUser(target.getUniqueId());
-                if (user != null) {
-                    Guild guild = plugin.getGuild(user.getGuild());
-                    if (guild != null) {
-                        Timestamp stamp = new Timestamp(user.getJoined());
-                        Date date = new Date(stamp.getTime());
-                        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                        player.sendMessage(ChatColor.YELLOW+ "==================================");
-                        player.sendMessage(ChatColor.AQUA + target.getName());
-                        player.sendMessage(ChatColor.YELLOW + plugin.getMessage("GUILD") + " : " + ChatColor.AQUA + guild.getName());
-                        player.sendMessage(ChatColor.YELLOW + plugin.getMessage("RANK") + " : " + ChatColor.AQUA + Rank.valueOf(user.getRank()).getRank());
-                        player.sendMessage(ChatColor.YELLOW + plugin.getMessage("JOINED") + " : " + ChatColor.AQUA + dt.format(date));
-                        player.sendMessage(ChatColor.YELLOW+ "==================================");
+            if (player.hasPermission("guilds.user.info")) {
+    
+                OfflinePlayer target;
+    
+                if (!(args.length > 1)) {
+                    target = player;
+                } else {
+                    target = Bukkit.getOfflinePlayer(args[1]).getPlayer();
+                }
+    
+                if (target != null) {
+                    User user = plugin.getUser(target.getUniqueId());
+                    if (user != null) {
+                        Guild guild = plugin.getGuild(user.getGuild());
+                        if (guild != null) {
+                            Timestamp stamp = new Timestamp(user.getJoined());
+                            Date date = new Date(stamp.getTime());
+                            SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                            player.sendMessage(ChatColor.YELLOW+ "==================================");
+                            player.sendMessage(ChatColor.AQUA + target.getName());
+                            player.sendMessage(ChatColor.YELLOW + plugin.getMessage("GUILD") + " : " + ChatColor.AQUA + guild.getName());
+                            player.sendMessage(ChatColor.YELLOW + plugin.getMessage("RANK") + " : " + ChatColor.AQUA + Rank.valueOf(user.getRank()).getRank());
+                            player.sendMessage(ChatColor.YELLOW + plugin.getMessage("JOINED") + " : " + ChatColor.AQUA + dt.format(date));
+                            player.sendMessage(ChatColor.YELLOW+ "==================================");
+                        } else {
+                            player.sendMessage(plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", target.getName()));
+                        }
                     } else {
                         player.sendMessage(plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", target.getName()));
                     }
                 } else {
-                    player.sendMessage(plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", target.getName()));
+                    player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 }
             } else {
-                player.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 
