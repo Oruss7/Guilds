@@ -21,26 +21,28 @@ public class CommandHelp {
     }
 
     private void Player(String[] args, Player player) {
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
 
-        player.sendMessage(ChatColor.YELLOW + "=============== Guilds v" + plugin.v + " ===============");
-        player.sendMessage(ChatColor.AQUA + "/guilds info [player] " + ChatColor.YELLOW + ": display informations about player.");
-        player.sendMessage(ChatColor.AQUA + "/guilds invite " + ChatColor.YELLOW + ": invite player to join your guild.");
-        player.sendMessage(ChatColor.AQUA + "/guilds accept/deny " + ChatColor.YELLOW + ": if you have a invitation, accept or deny to join.");
-        player.sendMessage(ChatColor.AQUA + "/guilds leave " + ChatColor.YELLOW + ": leave current guild.");
-        player.sendMessage(ChatColor.AQUA + "/base " + ChatColor.YELLOW + ": tp to your guild base.");
-        player.sendMessage(ChatColor.AQUA + "/g " + ChatColor.YELLOW + ": talk on guild chanel.");
-        player.sendMessage(ChatColor.AQUA + "/guilds promote <player> [rank] " + ChatColor.YELLOW + ": promote a member.");
-        player.sendMessage(ChatColor.AQUA + "/guilds demote <player> [rank] " + ChatColor.YELLOW + ": demote a member.");
-        player.sendMessage(ChatColor.AQUA + "/guilds kick <player> "+ ChatColor.YELLOW +": kick player from guild.");
-        if (player.hasPermission("guilds.admin.*")) {
-            player.sendMessage(ChatColor.AQUA + "/guilds create <guild> " + ChatColor.YELLOW + ": create guild.");
-            player.sendMessage(ChatColor.AQUA + "/guilds remove <guild> " + ChatColor.YELLOW + ": remove guild.");
-            player.sendMessage(ChatColor.AQUA + "/guilds setbase [guild] " + ChatColor.YELLOW + ": set guilds base.");
-            player.sendMessage(ChatColor.AQUA + "/guilds add <player> [guild]" + ChatColor.YELLOW + ": add a member (without invitation).");
-            player.sendMessage(ChatColor.AQUA + "/guilds save" + ChatColor.YELLOW + ": save to file.");
-            player.sendMessage(ChatColor.AQUA + "/guilds load" + ChatColor.YELLOW + ": load to file.");
+            player.sendMessage(ChatColor.YELLOW + "=============== Guilds v" + plugin.v + " ===============");
+            player.sendMessage(ChatColor.AQUA + "/guilds info [player] " + ChatColor.YELLOW + ": display informations about player.");
+            player.sendMessage(ChatColor.AQUA + "/guilds invite " + ChatColor.YELLOW + ": invite player to join your guild.");
+            player.sendMessage(ChatColor.AQUA + "/guilds accept/deny " + ChatColor.YELLOW + ": if you have a invitation, accept or deny to join.");
+            player.sendMessage(ChatColor.AQUA + "/guilds leave " + ChatColor.YELLOW + ": leave current guild.");
+            player.sendMessage(ChatColor.AQUA + "/base " + ChatColor.YELLOW + ": tp to your guild base.");
+            player.sendMessage(ChatColor.AQUA + "/g " + ChatColor.YELLOW + ": talk on guild chanel.");
+            player.sendMessage(ChatColor.AQUA + "/guilds promote <player> [rank] " + ChatColor.YELLOW + ": promote a member.");
+            player.sendMessage(ChatColor.AQUA + "/guilds demote <player> [rank] " + ChatColor.YELLOW + ": demote a member.");
+            player.sendMessage(ChatColor.AQUA + "/guilds kick <player> "+ ChatColor.YELLOW +": kick player from guild.");
+            if (player.hasPermission("guilds.admin.*")) {
+                player.sendMessage(ChatColor.AQUA + "/guilds create <guild> " + ChatColor.YELLOW + ": create guild.");
+                player.sendMessage(ChatColor.AQUA + "/guilds remove <guild> " + ChatColor.YELLOW + ": remove guild.");
+                player.sendMessage(ChatColor.AQUA + "/guilds setbase [guild] " + ChatColor.YELLOW + ": set guilds base.");
+                player.sendMessage(ChatColor.AQUA + "/guilds add <player> [guild]" + ChatColor.YELLOW + ": add a member (without invitation).");
+                player.sendMessage(ChatColor.AQUA + "/guilds save" + ChatColor.YELLOW + ": save to file.");
+                player.sendMessage(ChatColor.AQUA + "/guilds load" + ChatColor.YELLOW + ": load to file.");
+            }
+            player.sendMessage(ChatColor.YELLOW + "==========================================");
         }
-        player.sendMessage(ChatColor.YELLOW + "==========================================");
 
     }
 
