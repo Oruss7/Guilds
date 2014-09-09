@@ -34,7 +34,7 @@ public class CommandAdd {
     }
 
     private void Player(String[] args, Player sender) {
-        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+        if (plugin.getConfig().getList("config.enableWorlds").contains(sender.getWorld().getName())) {
             if (args.length > 2) {
                 if (sender.hasPermission("guilds.admin.add")) {
                     OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
