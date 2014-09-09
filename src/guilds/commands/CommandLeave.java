@@ -49,7 +49,7 @@ public class CommandLeave {
                     plugin.getConfiguration().savePlayers();
     
                     for (User member : guild.getListMember()) {
-                        if (member.getOfflinePlayer().isOnline()) {
+                        if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                             member.getPlayer().sendMessage(plugin.getMessage("GUILD_AS_LEAVE").replaceAll("%player%", player.getDisplayName()));
                         }
                     }
