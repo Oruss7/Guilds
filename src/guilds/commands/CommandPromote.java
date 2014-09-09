@@ -81,7 +81,7 @@ public class CommandPromote {
                             plugin.getConfiguration().savePlayers();
     
                             for (User member : guild.getListMember()) {
-                                if (member.getOfflinePlayer().isOnline()) {
+                                if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                                     if (args[0].equalsIgnoreCase("promote")) {
                                         member.getPlayer().sendMessage(plugin.getMessage("PLAYER_PROMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
                                     } else {
@@ -144,7 +144,7 @@ public class CommandPromote {
 
                         plugin.sendConsole(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                         for (User member : guild.getListMember()) {
-                            if (member.getOfflinePlayer().isOnline()) {
+                            if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                                 member.getPlayer().sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                             }
                         }
