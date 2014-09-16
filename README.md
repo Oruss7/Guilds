@@ -27,3 +27,8 @@ Plugin Bukkit pour gérer des guildes
 - Amélioration de l'aide
 - Permission en fonction du rang (chef de guilde = toutes, recrue = juste le droit de parler sur le canal)
 
+------------
+  BUG CONNUS
+------------
+
+- Deux guildes avec le même nom pose beaucoup de problème
