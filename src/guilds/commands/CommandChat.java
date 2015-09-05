@@ -23,30 +23,32 @@ class CommandChat {
     }
 
     private void Player(String[] args, Player player) {
-
-        if (player.hasPermission("guilds.user.chat")) {
-            User user = plugin.getUser(player.getUniqueId());
-            if (user != null) {
-                Guild guild = plugin.getGuild(user.getGuild());
-                if (guild != null) {
-                    StringBuilder message = new StringBuilder();
-                    for (int i = 0; i < args.length; i++) {
-                        message = message.append(" ").append(args[i]);
-                    }
-
-                    for (User member : guild.getListMember()) {
-                        if (member != null && member.getPlayer() != null && member.getPlayer().isOnline()) {
-                            member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN+"["+plugin.getMessage("GUILD")+ChatColor.GREEN+"] " + ChatColor.WHITE + player.getDisplayName() + ":"+ChatColor.WHITE+ message.toString()));
+        
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.user.chat")) {
+                User user = plugin.getUser(player.getUniqueId());
+                if (user != null) {
+                    Guild guild = plugin.getGuild(user.getGuild());
+                    if (guild != null) {
+                        StringBuilder message = new StringBuilder();
+                        for (int i = 0; i < args.length; i++) {
+                            message = message.append(" ").append(args[i]);
                         }
+    
+                        for (User member : guild.getListMember()) {
+                            if (member != null && member.getPlayer() != null && member.getPlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName()))) {
+                                member.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN+"["+plugin.getMessage("GUILD")+ChatColor.GREEN+"] " + ChatColor.WHITE + player.getDisplayName() + ":"+ChatColor.WHITE+ message.toString()));
+                            }
+                        }
+                    } else {
+                        player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
                     }
                 } else {
                     player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
                 }
             } else {
-                player.sendMessage(plugin.getMessage("NOT_IN_GUILD"));
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 

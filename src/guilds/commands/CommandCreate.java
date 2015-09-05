@@ -24,42 +24,43 @@ public class CommandCreate {
     }
 
     private void Player(String[] args, Player player) {
-
-        if (args.length > 1) {
-            StringBuilder guildName = new StringBuilder(args[1]);
-            for (int arg = 2; arg < args.length; arg++) {
-                guildName.append(" ").append(args[arg]);
-            }
-            if (player.hasPermission("guilds.admin.create")) {
-                Guild guild = plugin.getGuild(guildName.toString());
-                User user = plugin.getUser(player.getUniqueId());
-                if (guild != null) {
-                    player.sendMessage(plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()));
-                } else {
-                    guild = new Guild();
-                    guild.setName(guildName.toString());
-                    guild.setLocation(player.getLocation());
-
-                    if (user == null) {
-                        user = new User(player.getUniqueId(), guild.getId(), Rank.LEAD.toString(), System.currentTimeMillis(), null);
-                        plugin.addPlayers(user);
-                        guild.setLead(player.getUniqueId());
-                        guild.addMember(user);
-                        player.sendMessage(plugin.getMessage("GUILD_LEADER").replaceAll("%guild%", guild.getName()));
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (args.length > 1) {
+                StringBuilder guildName = new StringBuilder(args[1]);
+                for (int arg = 2; arg < args.length; arg++) {
+                    guildName.append(" ").append(args[arg]);
+                }
+                if (player.hasPermission("guilds.admin.create")) {
+                    Guild guild = plugin.getGuild(guildName.toString());
+                    User user = plugin.getUser(player.getUniqueId());
+                    if (guild != null) {
+                        player.sendMessage(plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()));
                     } else {
-                        if (user.haveGuild()) {
-                            player.sendMessage(plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()));
+                        guild = new Guild();
+                        guild.setName(guildName.toString());
+                        guild.setLocation(player.getLocation());
+    
+                        if (user == null) {
+                            user = new User(player.getUniqueId(), guild.getId(), Rank.LEAD.toString(), System.currentTimeMillis(), null);
+                            plugin.addPlayers(user);
+                            guild.setLead(player.getUniqueId());
+                            guild.addMember(user);
+                            player.sendMessage(plugin.getMessage("GUILD_LEADER").replaceAll("%guild%", guild.getName()));
+                        } else {
+                            if (user.haveGuild()) {
+                                player.sendMessage(plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()));
+                            }
                         }
+                        plugin.addGuild(guild);
+                        plugin.getConfiguration().saveGuilds();
+                        player.sendMessage(plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()));
                     }
-                    plugin.addGuild(guild);
-                    plugin.getConfiguration().saveGuilds();
-                    player.sendMessage(plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()));
+                } else {
+                    player.sendMessage(plugin.getMessage("NO_PERMISSION"));
                 }
             } else {
-                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
+                player.sendMessage(plugin.getMessage("COMMAND_CREATE"));
             }
-        } else {
-            player.sendMessage(plugin.getMessage("COMMAND_CREATE"));
         }
     }
 

@@ -32,7 +32,7 @@ public class CommandRemove {
                 Guild guild = plugin.getGuild(guildName.toString());
                 if (guild != null) {
                     for (User member : guild.getListMember()) {
-                        if (member.getOfflinePlayer().isOnline()) {
+                        if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                             member.getPlayer().sendMessage(plugin.getMessage("GUILD_DELETED").replaceAll("%guild%", guildName.toString()));
                         }
                             member.setGuild(null);
@@ -71,7 +71,7 @@ public class CommandRemove {
             Guild guild = plugin.getGuild(guildName.toString());
             if (guild != null) {
                 for (User member : guild.getListMember()) {
-                    if (member.getOfflinePlayer().isOnline()) {
+                    if (member.getOfflinePlayer().isOnline() && (plugin.getConfig().getList("config.enableWorlds").contains(member.getPlayer.getWorld().getName())) {
                         member.getPlayer().sendMessage(plugin.getMessage("GUILD_DELETED").replaceAll("%guild%", guildName.toString()));
                     }
                     guild.removeMember(member);

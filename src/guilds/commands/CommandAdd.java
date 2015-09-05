@@ -34,60 +34,61 @@ public class CommandAdd {
     }
 
     private void Player(String[] args, Player sender) {
-
-        if (args.length > 2) {
-            if (sender.hasPermission("guilds.admin.add")) {
-                OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
-                if (!opl.isOnline()) {
-                    sender.sendMessage(plugin.getMessage("PLAYER_OFFLINE"));
-                } else {
-                    Player player = opl.getPlayer();
-                    if (player != null) {
-                        User user = plugin.getUser(player.getUniqueId());
-                        Guild guild = plugin.getGuild(args[2]);
-                        if (guild != null) {
-                            if (user != null) {
-                                // joueur est déjà présent
-                                if (user.haveGuild()) {
-                                    // joueur déjà guildé  
-                                    sender.sendMessage(plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", plugin.getGuild(user.getGuild()).getName()));
-                                    return;
+        if (plugin.getConfig().getList("config.enableWorlds").contains(sender.getWorld().getName())) {
+            if (args.length > 2) {
+                if (sender.hasPermission("guilds.admin.add")) {
+                    OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
+                    if (!opl.isOnline()) {
+                        sender.sendMessage(plugin.getMessage("PLAYER_OFFLINE"));
+                    } else {
+                        Player player = opl.getPlayer();
+                        if (player != null) {
+                            User user = plugin.getUser(player.getUniqueId());
+                            Guild guild = plugin.getGuild(args[2]);
+                            if (guild != null) {
+                                if (user != null) {
+                                    // joueur est déjà présent
+                                    if (user.haveGuild()) {
+                                        // joueur déjà guildé  
+                                        sender.sendMessage(plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", plugin.getGuild(user.getGuild()).getName()));
+                                        return;
+                                    } else {
+                                        // joueur non guildé
+                                        user.setGuild(guild.getId());
+                                        user.setRank(Rank.NEWBIE.toString());
+                                        user.setJoined(System.currentTimeMillis());
+                                        if (user.getInvitation().equals(guild.getId())) {
+                                            // remove de l'invitation si elle vient de cette guilde
+                                            user.setInvitation(null);
+                                        }
+                                    }
                                 } else {
-                                    // joueur non guildé
-                                    user.setGuild(guild.getId());
-                                    user.setRank(Rank.NEWBIE.toString());
-                                    user.setJoined(System.currentTimeMillis());
-                                    if (user.getInvitation().equals(guild.getId())) {
-                                        // remove de l'invitation si elle vient de cette guilde
-                                        user.setInvitation(null);
+                                    // joueur non créé
+                                    user = new User(player.getUniqueId(), guild.getId(), Rank.NEWBIE.toString(), System.currentTimeMillis(), null);
+                                    plugin.addPlayers(user);
+                                }
+                                guild.addMember(user);
+    
+                                plugin.getConfiguration().savePlayers();
+    
+                                for (User member : guild.getListMember()) {
+                                    if (member.getOfflinePlayer().isOnline()) {
+                                        member.getPlayer().sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                                     }
                                 }
                             } else {
-                                // joueur non créé
-                                user = new User(player.getUniqueId(), guild.getId(), Rank.NEWBIE.toString(), System.currentTimeMillis(), null);
-                                plugin.addPlayers(user);
-                            }
-                            guild.addMember(user);
-
-                            plugin.getConfiguration().savePlayers();
-
-                            for (User member : guild.getListMember()) {
-                                if (member.getOfflinePlayer().isOnline()) {
-                                    member.getPlayer().sendMessage(plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
-                                }
+                                sender.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                             }
                         } else {
-                            sender.sendMessage(plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
+                            sender.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                         }
-                    } else {
-                        sender.sendMessage(plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                     }
+                } else {
+                    sender.sendMessage(plugin.getMessage("NO_PERMISSION"));
                 }
             } else {
-                sender.sendMessage(plugin.getMessage("NO_PERMISSION"));
+                sender.sendMessage(plugin.getMessage("COMMAND_ADD"));
             }
-        } else {
-            sender.sendMessage(plugin.getMessage("COMMAND_ADD"));
         }
     }
 

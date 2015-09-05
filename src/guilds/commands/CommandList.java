@@ -22,23 +22,24 @@ public class CommandList {
     }
 
     private void Player(String[] args, Player player) {
-
-        if (player.hasPermission("guilds.user.list")) {
-            StringBuilder msg = new StringBuilder();
-            for (Guild g : plugin.getGuilds()) {
-                if (msg.length() == 0) {
-                    msg = msg.append(g.getName());
-                } else {
-                    msg = msg.append(", ").append(g.getName());
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.user.list")) {
+                StringBuilder msg = new StringBuilder();
+                for (Guild g : plugin.getGuilds()) {
+                    if (msg.length() == 0) {
+                        msg = msg.append(g.getName());
+                    } else {
+                        msg = msg.append(", ").append(g.getName());
+                    }
                 }
-            }
-            if (plugin.getGuilds().isEmpty()) {
-                player.sendMessage(plugin.getMessage("NOT_GUILD"));
+                if (plugin.getGuilds().isEmpty()) {
+                    player.sendMessage(plugin.getMessage("NOT_GUILD"));
+                } else {
+                    player.sendMessage(msg.toString());
+                }
             } else {
-                player.sendMessage(msg.toString());
+                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
         }
     }
 
