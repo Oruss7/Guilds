@@ -1,64 +1,64 @@
 package guilds.commands;
 
-import guilds.Guild;
-import guilds.GuildsBasic;
+import org.bukkit.command.*;
+import org.bukkit.entity.*;
+import guilds.*;
+import java.util.*;
+import java.io.*;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-public class CommandList {
-
+public class CommandList
+{
     private GuildsBasic plugin;
-
-    public CommandList(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
-
+    
+    public CommandList(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
-
         if (sender instanceof Player) {
-            Player(args, (Player) sender);
-        } else {
-            Console(args);
+            this.Player(args, (Player)sender);
+        }
+        else {
+            this.Console(args);
         }
     }
-
-    private void Player(String[] args, Player player) {
-        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
-            if (player.hasPermission("guilds.user.list")) {
-                StringBuilder msg = new StringBuilder();
-                for (Guild g : plugin.getGuilds()) {
-                    if (msg.length() == 0) {
-                        msg = msg.append(g.getName());
-                    } else {
-                        msg = msg.append(", ").append(g.getName());
-                    }
+    
+    private void Player(final String[] args, final Player player) {
+        if (player.hasPermission("guilds.user.list")) {
+            StringBuilder msg = new StringBuilder();
+            for (final Guild g : this.plugin.getGuilds()) {
+                if (msg.length() == 0) {
+                    msg = msg.append(g.getName());
                 }
-                if (plugin.getGuilds().isEmpty()) {
-                    player.sendMessage(plugin.getMessage("NOT_GUILD"));
-                } else {
-                    player.sendMessage(msg.toString());
+                else {
+                    msg = msg.append(", ").append(g.getName());
                 }
-            } else {
-                player.sendMessage(plugin.getMessage("NO_PERMISSION"));
+            }
+            if (this.plugin.getGuilds().isEmpty()) {
+                player.sendMessage(this.plugin.getMessage("NOT_GUILD"));
+            }
+            else {
+                player.sendMessage(msg.toString());
             }
         }
+        else {
+            player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
+        }
     }
-
-    private void Console(String[] args) {
-
+    
+    private void Console(final String[] args) {
         StringBuilder msg = new StringBuilder();
-        for (Guild g : plugin.getGuilds()) {
+        for (final Guild g : this.plugin.getGuilds()) {
             if (msg.length() == 0) {
                 msg = msg.append(g.getName());
-            } else {
+            }
+            else {
                 msg = msg.append(", ").append(g.getName());
             }
         }
-        if (plugin.getGuilds().isEmpty()) {
-            plugin.sendConsole(plugin.getMessage("NOT_GUILD"));
-        } else {
-            plugin.sendConsole(msg.toString());
+        if (this.plugin.getGuilds().isEmpty()) {
+            this.plugin.sendConsole(this.plugin.getMessage("NOT_GUILD"));
         }
-        plugin.sendConsole(msg.toString());
-
+        else {
+            this.plugin.sendConsole(msg.toString());
+        }
+        this.plugin.sendConsole(msg.toString());
     }
 }

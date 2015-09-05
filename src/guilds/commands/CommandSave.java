@@ -1,43 +1,37 @@
 package guilds.commands;
 
-import guilds.GuildsBasic;
+import guilds.*;
+import org.bukkit.command.*;
+import org.bukkit.entity.*;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-public class CommandSave {
-
+public class CommandSave
+{
     private GuildsBasic plugin;
-
-    public CommandSave(CommandSender sender, String[] args, GuildsBasic guildsBasic) {
-
+    
+    public CommandSave(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
-
         if (sender instanceof Player) {
-            Player(args, (Player) sender);
-        } else {
-            Console(args);
+            this.Player(args, (Player)sender);
+        }
+        else {
+            this.Console(args);
         }
     }
-
-    private void Player(String[] args, Player player) {
-
+    
+    private void Player(final String[] args, final Player player) {
         if (player.hasPermission("guilds.admin.save")) {
-            plugin.getConfiguration().saveGuilds();
-            plugin.getConfiguration().savePlayers();
-            player.sendMessage(plugin.getMessage("SAVE"));
-        } else {
-            player.sendMessage(plugin.getMessage("NO_PERMISSION"));
+            this.plugin.getConfiguration().saveGuilds();
+            this.plugin.getConfiguration().savePlayers();
+            player.sendMessage(this.plugin.getMessage("SAVE"));
+        }
+        else {
+            player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }
-
-    private void Console(String[] args) {
-
-        plugin.getConfiguration().saveGuilds();
-        plugin.getConfiguration().savePlayers();
-
-        plugin.sendConsole(plugin.getMessage("SAVE"));
-
+    
+    private void Console(final String[] args) {
+        this.plugin.getConfiguration().saveGuilds();
+        this.plugin.getConfiguration().savePlayers();
+        this.plugin.sendConsole(this.plugin.getMessage("SAVE"));
     }
-
 }

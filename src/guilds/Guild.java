@@ -1,12 +1,10 @@
 package guilds;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import org.bukkit.Location;
+import org.bukkit.*;
+import java.util.*;
 
-public class Guild {
-
+public class Guild
+{
     private UUID id;
     private String name;
     private UUID lead;
@@ -14,17 +12,14 @@ public class Guild {
     private String playerPrefix;
     private String playerSuffix;
     private Location location;
-    // liste des membres (utile pour le tchat de guilde)
     private List<User> listMember;
-
-
+    
     public Guild() {
-        id = UUID.randomUUID();
-
-        listMember = new ArrayList<>();
+        this.id = UUID.randomUUID();
+        this.listMember = new ArrayList<User>();
     }
-
-    public Guild(UUID id, String name, UUID lead, String color, String prefix, String suffix, Location location) {
+    
+    public Guild(final UUID id, final String name, final UUID lead, final String color, final String prefix, final String suffix, final Location location) {
         this.id = id;
         this.name = name;
         this.lead = lead;
@@ -32,77 +27,74 @@ public class Guild {
         this.playerPrefix = prefix;
         this.playerSuffix = suffix;
         this.location = location;
-
-        listMember = new ArrayList<>();
+        this.listMember = new ArrayList<User>();
     }
-
+    
     public UUID getId() {
-        return id;
+        return this.id;
     }
-
+    
     public String getName() {
-        return name;
+        return this.name;
     }
-
-    public void setName(String name) {
+    
+    public void setName(final String name) {
         this.name = name;
     }
-
+    
     public UUID getLead() {
-        return lead;
+        return this.lead;
     }
-
-    public void setLead(UUID lead) {
+    
+    public void setLead(final UUID lead) {
         this.lead = lead;
     }
-
+    
     public String getColor() {
-        return color;
+        return this.color;
     }
-
-    public void setColor(String color) {
+    
+    public void setColor(final String color) {
         this.color = color;
     }
-
+    
     public String getPlayerPrefix() {
-        return playerPrefix;
+        return this.playerPrefix;
     }
-
-    public void setPlayerPrefix(String playerPrefix) {
+    
+    public void setPlayerPrefix(final String playerPrefix) {
         this.playerPrefix = playerPrefix;
     }
-
+    
     public String getPlayerSuffix() {
-        return playerSuffix;
+        return this.playerSuffix;
     }
-
-    public void setPlayerSuffix(String playerSuffix) {
+    
+    public void setPlayerSuffix(final String playerSuffix) {
         this.playerSuffix = playerSuffix;
     }
-
+    
     public Location getLocation() {
-        return location;
+        return this.location;
     }
-
-    public void setLocation(Location location) {
+    
+    public void setLocation(final Location location) {
         this.location = location;
     }
-
-    public void addMember(User member) {
-        if (!listMember.contains(member)) {
-            listMember.add(member);
+    
+    public void addMember(final User member) {
+        if (!this.listMember.contains(member)) {
+            this.listMember.add(member);
         }
     }
-
-    public void removeMember(User member) {
-        if (listMember.contains(member)) {
-            listMember.remove(member);
-            
+    
+    public void removeMember(final User member) {
+        if (this.listMember.contains(member)) {
+            this.listMember.remove(member);
         }
     }
-
+    
     public List<User> getListMember() {
-        return listMember;
+        return this.listMember;
     }
-
 }
