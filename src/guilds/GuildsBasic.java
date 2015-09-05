@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuildsBasic extends JavaPlugin {
 
-    private Plugin wg = null;
+    private final Plugin wg = null;
     public String chatFormat;
     public String v = "0.0.0";
 
