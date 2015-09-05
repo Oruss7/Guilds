@@ -2,7 +2,7 @@ package guilds;
 
 public enum Rank {
 
-    LEAD("Chef de Guild"),
+    LEAD("Chef de Guilde"),
     OFFICER("Officier"),
     MEMBER("Membre"),
     NEWBIE("Recrue");
