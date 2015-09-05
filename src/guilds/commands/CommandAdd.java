@@ -4,30 +4,27 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.*;
 import guilds.*;
-import java.util.*;
 
-public class CommandAdd
-{
+public class CommandAdd {
+
     private final GuildsBasic plugin;
-    
+
     public CommandAdd(final CommandSender sender, final String[] args, final GuildsBasic GuildsBasic) {
         this.plugin = GuildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.Console(args);
         }
     }
-    
+
     private void Player(final String[] args, final Player sender) {
         if (args.length > 2) {
             if (sender.hasPermission("guilds.admin.add")) {
                 final OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
                 if (!opl.isOnline()) {
                     sender.sendMessage(this.plugin.getMessage("PLAYER_OFFLINE"));
-                }
-                else {
+                } else {
                     final Player player = opl.getPlayer();
                     if (player != null) {
                         User user = this.plugin.getUser(player.getUniqueId());
@@ -44,8 +41,7 @@ public class CommandAdd
                                 if (user.getInvitation().equals(guild.getId())) {
                                     user.setInvitation(null);
                                 }
-                            }
-                            else {
+                            } else {
                                 user = new User(player.getUniqueId(), guild.getId(), Rank.NEWBIE.toString(), System.currentTimeMillis(), null);
                                 this.plugin.addPlayers(user);
                             }
@@ -56,32 +52,27 @@ public class CommandAdd
                                     member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             sender.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                         }
-                    }
-                    else {
+                    } else {
                         sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                     }
                 }
-            }
-            else {
+            } else {
                 sender.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        }
-        else {
+        } else {
             sender.sendMessage(this.plugin.getMessage("COMMAND_ADD"));
         }
     }
-    
+
     private void Console(final String[] args) {
         if (args.length > 2) {
             final OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
             if (!opl.isOnline()) {
                 this.plugin.sendConsole(this.plugin.getMessage("PLAYER_OFFLINE").replaceAll("%player%", args[1]));
-            }
-            else {
+            } else {
                 final Player player = opl.getPlayer();
                 if (player != null) {
                     User user = this.plugin.getUser(player.getUniqueId());
@@ -98,8 +89,7 @@ public class CommandAdd
                             if (user.getInvitation().equals(guild.getId())) {
                                 user.setInvitation(null);
                             }
-                        }
-                        else {
+                        } else {
                             user = new User(player.getUniqueId(), guild.getId(), Rank.NEWBIE.toString(), System.currentTimeMillis(), null);
                             this.plugin.addPlayers(user);
                         }
@@ -111,17 +101,14 @@ public class CommandAdd
                                 member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                             }
                         }
-                    }
-                    else {
+                    } else {
                         this.plugin.sendConsole(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                     }
-                }
-                else {
+                } else {
                     this.plugin.sendConsole(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 }
             }
-        }
-        else {
+        } else {
             this.plugin.sendConsole(this.plugin.getMessage("COMMAND_ADD"));
         }
     }

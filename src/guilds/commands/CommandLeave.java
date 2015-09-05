@@ -3,22 +3,20 @@ package guilds.commands;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import guilds.*;
-import java.util.*;
 
-public class CommandLeave
-{
+public class CommandLeave {
+
     private GuildsBasic plugin;
-    
+
     public CommandLeave(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.plugin.sendConsole(this.plugin.getMessage("CONSOLE_ERROR"));
         }
     }
-    
+
     private void Player(final String[] args, final Player player) {
         if (player.hasPermission("guilds.user.leave")) {
             if (this.plugin.getConfig().getBoolean("config.ENABLE_CHANGE_GUILD")) {
@@ -45,12 +43,10 @@ public class CommandLeave
                     }
                 }
                 player.sendMessage(this.plugin.getMessage("GUILD_LEAVE").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
-            }
-            else {
+            } else {
                 player.sendMessage(this.plugin.getMessage("GUILD_CHOSEN"));
             }
-        }
-        else {
+        } else {
             player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }

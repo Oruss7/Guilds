@@ -4,22 +4,20 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import org.bukkit.*;
 import guilds.*;
-import java.util.*;
 
-public class CommandPromote
-{
+public class CommandPromote {
+
     private final GuildsBasic plugin;
-    
+
     public CommandPromote(final CommandSender sender, final String[] args, final GuildsBasic GuildsBasic) {
         this.plugin = GuildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.Console(args);
         }
     }
-    
+
     private void Player(final String[] args, final Player sender) {
         if (args.length > 1) {
             final User user = this.plugin.getUser(sender.getUniqueId());
@@ -56,8 +54,7 @@ public class CommandPromote
                                     return;
                                 }
                             }
-                        }
-                        else if (args[0].equalsIgnoreCase("demote")) {
+                        } else if (args[0].equalsIgnoreCase("demote")) {
                             switch (userTarget.demote()) {
                                 case -1: {
                                     sender.sendMessage(this.plugin.getMessage("RANK_MIN").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
@@ -74,37 +71,31 @@ public class CommandPromote
                             if (member.getOfflinePlayer().isOnline()) {
                                 if (args[0].equalsIgnoreCase("promote")) {
                                     member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_PROMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                }
-                                else {
+                                } else {
                                     member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_DEMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         sender.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                     }
-                }
-                else {
+                } else {
                     sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 }
-            }
-            else {
+            } else {
                 sender.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        }
-        else {
+        } else {
             sender.sendMessage(this.plugin.getMessage("COMMAND_PROMOTE"));
         }
     }
-    
+
     private void Console(final String[] args) {
         if (args.length > 2) {
             final OfflinePlayer opl = Bukkit.getOfflinePlayer(args[1]);
             if (!opl.isOnline()) {
                 this.plugin.sendConsole(this.plugin.getMessage("PLAYER_OFFLINE").replaceAll("%player%", args[1]));
-            }
-            else {
+            } else {
                 final Player player = opl.getPlayer();
                 if (player != null) {
                     User user = this.plugin.getUser(player.getUniqueId());
@@ -121,8 +112,7 @@ public class CommandPromote
                             if (user.getInvitation().equals(guild.getId())) {
                                 user.setInvitation(null);
                             }
-                        }
-                        else {
+                        } else {
                             user = new User(player.getUniqueId(), guild.getId(), Rank.NEWBIE.toString(), System.currentTimeMillis(), null);
                             this.plugin.addPlayers(user);
                         }
@@ -134,17 +124,14 @@ public class CommandPromote
                                 member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_GUILD_JOIN").replaceAll("%player%", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                             }
                         }
-                    }
-                    else {
+                    } else {
                         this.plugin.sendConsole(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                     }
-                }
-                else {
+                } else {
                     this.plugin.sendConsole(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                 }
             }
-        }
-        else {
+        } else {
             this.plugin.sendConsole(this.plugin.getMessage("COMMAND_ADD"));
         }
     }

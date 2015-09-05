@@ -4,22 +4,20 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import guilds.*;
 import org.bukkit.*;
-import java.util.*;
 
-public class CommandInvite
-{
+public class CommandInvite {
+
     private GuildsBasic plugin;
-    
+
     public CommandInvite(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.Console(args);
         }
     }
-    
+
     private void Player(final String[] args, final Player player) {
         if (args[0].equalsIgnoreCase("invite")) {
             if (args.length < 2) {
@@ -49,8 +47,7 @@ public class CommandInvite
             if (userTarget == null) {
                 userTarget = new User(playerTarget);
                 this.plugin.addPlayers(userTarget);
-            }
-            else if (userTarget.haveGuild()) {
+            } else if (userTarget.haveGuild()) {
                 player.sendMessage(this.plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", this.plugin.getGuild(userTarget.getGuild()).getName()));
                 return;
             }
@@ -121,7 +118,7 @@ public class CommandInvite
             this.plugin.getConfiguration().savePlayers();
         }
     }
-    
+
     private void Console(final String[] args) {
         this.plugin.sendConsole(this.plugin.getMessage("CONSOLE_ERROR"));
     }

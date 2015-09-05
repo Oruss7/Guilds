@@ -8,28 +8,26 @@ import org.bukkit.*;
 import guilds.*;
 import java.sql.Timestamp;
 
-public class CommandInfo
-{
+public class CommandInfo {
+
     private GuildsBasic plugin;
-    
+
     public CommandInfo(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.Console(args);
         }
     }
-    
+
     private void Player(final String[] args, final Player player) {
         if (player.hasPermission("guilds.user.info")) {
             OfflinePlayer target;
             if (args.length <= 1) {
-                target = (OfflinePlayer)player;
-            }
-            else {
-                target = (OfflinePlayer)Bukkit.getOfflinePlayer(args[1]).getPlayer();
+                target = (OfflinePlayer) player;
+            } else {
+                target = (OfflinePlayer) Bukkit.getOfflinePlayer(args[1]).getPlayer();
             }
             if (target != null) {
                 final User user = this.plugin.getUser(target.getUniqueId());
@@ -40,29 +38,25 @@ public class CommandInfo
                         final Date date = new Date(stamp.getTime());
                         final SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                         player.sendMessage(ChatColor.YELLOW + "==================================");
-                        player.sendMessage(ChatColor.AQUA + target.getName());
+                        player.sendMessage(ChatColor.YELLOW + "Informations sur " + ChatColor.WHITE + target.getName());
                         player.sendMessage(ChatColor.YELLOW + this.plugin.getMessage("GUILD") + " : " + ChatColor.AQUA + guild.getName());
                         player.sendMessage(ChatColor.YELLOW + this.plugin.getMessage("RANK") + " : " + ChatColor.AQUA + Rank.valueOf(user.getRank()).getRank());
                         player.sendMessage(ChatColor.YELLOW + this.plugin.getMessage("JOINED") + " : " + ChatColor.AQUA + dt.format(date));
                         player.sendMessage(ChatColor.YELLOW + "==================================");
-                    }
-                    else {
+                    } else {
                         player.sendMessage(this.plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", target.getName()));
                     }
-                }
-                else {
+                } else {
                     player.sendMessage(this.plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", target.getName()));
                 }
-            }
-            else {
+            } else {
                 player.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
             }
-        }
-        else {
+        } else {
             player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }
-    
+
     private void Console(final String[] args) {
         if (args.length <= 1) {
             this.plugin.sendConsole(this.plugin.getMessage("COMMAND_INFO").replaceAll("&([0-9a-fk-or])", ""));
@@ -83,16 +77,13 @@ public class CommandInfo
                     this.plugin.sendConsole(this.plugin.getMessage("RANK") + " : " + user.getRank());
                     this.plugin.sendConsole(this.plugin.getMessage("JOINED") + " : " + dt.format(date));
                     this.plugin.sendConsole("==================================");
-                }
-                else {
+                } else {
                     this.plugin.sendConsole(this.plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", args[1]));
                 }
-            }
-            else {
+            } else {
                 this.plugin.sendConsole(this.plugin.getMessage("PLAYER_NOT_IN_GUILD").replaceAll("%player%", args[1]));
             }
-        }
-        else {
+        } else {
             this.plugin.sendConsole(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
         }
     }

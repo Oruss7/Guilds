@@ -7,20 +7,19 @@ import org.bukkit.plugin.*;
 import guilds.*;
 import org.bukkit.*;
 
-public class CommandBase
-{
+public class CommandBase {
+
     private GuildsBasic plugin;
-    
+
     public CommandBase(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.plugin.sendConsole("CONSOLE_ERROR");
         }
     }
-    
+
     private void Player(final String[] args, final Player player) {
         if (player.hasPermission("guilds.user.base")) {
             if (Utils.isCooldown(player.getUniqueId())) {
@@ -36,24 +35,21 @@ public class CommandBase
                     final Chunk c = location.getChunk();
                     location.getWorld().loadChunk(c);
                     location.getWorld().refreshChunk(c.getX(), c.getZ());
-                    location.setY((double)location.getWorld().getHighestBlockYAt(location));
+                    location.setY((double) location.getWorld().getHighestBlockYAt(location));
                     if (!Utils.checkLocation(player, location)) {
                         player.sendMessage(this.plugin.getMessage("CAN_NOT_TELEPORT_HERE"));
                         return;
                     }
                     player.teleport(location);
                     player.sendMessage(this.plugin.getMessage("TELEPORTATION"));
-                    Utils.addCooldown((Plugin)this.plugin, player.getUniqueId(), this.plugin.getConfig().getInt("config.BASE.COOLDOWN"));
-                }
-                else {
+                    Utils.addCooldown((Plugin) this.plugin, player.getUniqueId(), this.plugin.getConfig().getInt("config.BASE.COOLDOWN"));
+                } else {
                     player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
                 }
-            }
-            else {
+            } else {
                 player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
             }
-        }
-        else {
+        } else {
             player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }

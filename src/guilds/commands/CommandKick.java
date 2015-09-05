@@ -4,22 +4,20 @@ import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import guilds.*;
 import org.bukkit.*;
-import java.util.*;
 
-public class CommandKick
-{
+public class CommandKick {
+
     private GuildsBasic plugin;
-    
+
     public CommandKick(final CommandSender sender, final String[] args, final GuildsBasic guildsBasic) {
         this.plugin = guildsBasic;
         if (sender instanceof Player) {
-            this.Player(args, (Player)sender);
-        }
-        else {
+            this.Player(args, (Player) sender);
+        } else {
             this.Console(args);
         }
     }
-    
+
     private void Player(final String[] args, final Player player) {
         if (args.length >= 2) {
             Guild guild;
@@ -30,8 +28,7 @@ public class CommandKick
                     return;
                 }
                 guild = this.plugin.getGuild(user.getGuild());
-            }
-            else {
+            } else {
                 guild = this.plugin.getGuild(args[2]);
                 if (guild == null) {
                     player.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
@@ -68,16 +65,14 @@ public class CommandKick
                     playerTarget.sendMessage(this.plugin.getMessage("YOU_REMOVED_FROM_GUILD").replaceAll("%player", player.getDisplayName()).replaceAll("%guild%", guild.getName()));
                 }
                 this.plugin.getConfiguration().savePlayers();
-            }
-            else {
+            } else {
                 player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        }
-        else {
+        } else {
             player.sendMessage(this.plugin.getMessage("COMMAND_KICK"));
         }
     }
-    
+
     private void Console(final String[] args) {
         if (args.length > 1) {
             final OfflinePlayer oplayer = Bukkit.getOfflinePlayer(args[1]);
@@ -115,8 +110,7 @@ public class CommandKick
             }
             this.plugin.getConfiguration().savePlayers();
             this.plugin.getConfiguration().saveGuilds();
-        }
-        else {
+        } else {
             this.plugin.sendConsole(this.plugin.getMessage("COMMAND_KICK"));
         }
     }
