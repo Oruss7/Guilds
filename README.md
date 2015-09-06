@@ -16,6 +16,7 @@ Plugin Bukkit pour gérer des guildes
 - rangs (officier, recrue ...) avec gestion des couleurs dans le canal guilde
 - Gestion des joueurs par UUID 
 - Gestion des guildes par UUID (permet de les renommer)
+- Lister les guildes
 
 ------------
   A VENIR
@@ -26,9 +27,11 @@ Plugin Bukkit pour gérer des guildes
 - Gestion des couleurs en fonction du rang dans le canal guilde
 - Amélioration de l'aide
 - Permission en fonction du rang (chef de guilde = toutes, recrue = juste le droit de parler sur le canal)
+- expérience de guilde (API pour utiliser par d'autre plugin)
+- Lister les membres d'une guilde (avec leur rang)
 
 ------------
   BUG CONNUS
 ------------
 
-- Deux guildes avec le même nom pose beaucoup de problème
+- impossible d'avoir 2 guildes avec le même nom
