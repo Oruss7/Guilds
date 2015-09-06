@@ -40,7 +40,7 @@ Plugin Bukkit pour gérer des guildes
   Commandes et Permissions
 ------------
 
-##Utilisateurs :
+##Utilisateurs (guilds.user.*) :
 
 - /guilds info [joueur] : affiche les infos du joueur
 - /guilds invite <joueur> : invite un joueur à rejoindre votre guilde.
@@ -48,15 +48,18 @@ Plugin Bukkit pour gérer des guildes
 - /guilds leave : quitte votre guilde.
 - /base : tp à la taverne de guilde.
 - /g : parle sur le canal guilde.
-- /guilds promote <joueur> [rang] : grade le joueur de la guilde.
-- /guilds demote <joueur> [rang] : dégrade le joueur de la guilde.
-- /guilds kick <joueur> : vire le joueur de la guilde.
+- /guilds list : liste les guildes du serveur
 
-##Administration : 
+
+
+##Administration (guilds.admin.*): 
 
 - /guilds create <guild> : create guild.
 - /guilds remove <guild> : remove guild.
 - /guilds setbase [guild] : set guilds base.
 - /guilds add <player> [guild]: add a member (without invitation).
+- /guilds promote <joueur> [rang] : grade le joueur de la guilde.
+- /guilds demote <joueur> [rang] : dégrade le joueur de la guilde.
+- /guilds kick <joueur> : vire le joueur de la guilde.
 - /guilds save: save to file.
 - /guilds load: load to file.
