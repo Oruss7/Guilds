@@ -57,11 +57,11 @@ public class CommandInvite {
             }
             userTarget.setInvitation(guild.getId());
             if (playerTarget.isOnline()) {
-                playerTarget.getPlayer().sendMessage(this.plugin.getMessage("INVITATION").replaceAll("%player%", player.getName().replaceAll("%guild%", guild.getName())));
+                playerTarget.getPlayer().sendMessage(this.plugin.getMessage("INVITATION").replaceAll("%player%", player.getName()).replaceAll("%guild%", guild.getName()));
             }
             for (final User member : guild.getListMember()) {
                 if (member.getOfflinePlayer().isOnline()) {
-                    member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName().replaceAll("%guild%", guild.getName())));
+                    member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", guild.getName()));
                 }
             }
             this.plugin.getConfiguration().savePlayers();

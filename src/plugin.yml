@@ -8,8 +8,8 @@ commands:
   guilds:
     description: Various commands for Guilds.
     usage: /<command> <arg>
-  base:
-    description: TP to Base.
+  gtp:
+    description: TP to Guild Base.
     usage: /<command>
   gchat:
     description: Guild chat

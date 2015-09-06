@@ -3,6 +3,7 @@ package guilds.commands;
 import org.bukkit.command.*;
 import org.bukkit.entity.*;
 import guilds.*;
+import org.bukkit.ChatColor;
 
 public class CommandList {
 
@@ -20,6 +21,7 @@ public class CommandList {
     private void Player(final String[] args, final Player player) {
         if (player.hasPermission("guilds.user.list")) {
             StringBuilder msg = new StringBuilder();
+            msg.append(ChatColor.YELLOW + "Liste des guildes : " + ChatColor.WHITE);
             for (final Guild g : this.plugin.getGuilds()) {
                 if (msg.length() == 0) {
                     msg = msg.append(g.getName());

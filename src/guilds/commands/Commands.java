@@ -50,7 +50,7 @@ public class Commands implements CommandExecutor {
             }
             return true;
         }
-        if (label.equalsIgnoreCase("base")) {
+        if (label.equalsIgnoreCase("gtp")) {
             new CommandBase(sender, args, this.plugin);
             return true;
         }
