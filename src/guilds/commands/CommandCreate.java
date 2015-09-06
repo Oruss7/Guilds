@@ -19,38 +19,40 @@ public class CommandCreate {
     }
 
     private void Player(final String[] args, final Player player) {
-        if (args.length > 1) {
-            final StringBuilder guildName = new StringBuilder(args[1]);
-            for (int arg = 2; arg < args.length; ++arg) {
-                guildName.append(" ").append(args[arg]);
-            }
-            if (player.hasPermission("guilds.admin.create")) {
-                Guild guild = this.plugin.getGuild(guildName.toString());
-                User user = this.plugin.getUser(player.getUniqueId());
-                if (guild != null) {
-                    player.sendMessage(this.plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()));
-                } else {
-                    guild = new Guild();
-                    guild.setName(guildName.toString());
-                    guild.setLocation(player.getLocation());
-                    if (user == null) {
-                        user = new User(player.getUniqueId(), guild.getId(), Rank.LEAD.toString(), System.currentTimeMillis(), null);
-                        this.plugin.addPlayers(user);
-                        guild.setLead(player.getUniqueId());
-                        guild.addMember(user);
-                        player.sendMessage(this.plugin.getMessage("GUILD_LEADER").replaceAll("%guild%", guild.getName()));
-                    } else if (user.haveGuild()) {
-                        player.sendMessage(this.plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()));
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (args.length > 1) {
+                final StringBuilder guildName = new StringBuilder(args[1]);
+                for (int arg = 2; arg < args.length; ++arg) {
+                    guildName.append(" ").append(args[arg]);
+                }
+                if (player.hasPermission("guilds.admin.create")) {
+                    Guild guild = this.plugin.getGuild(guildName.toString());
+                    User user = this.plugin.getUser(player.getUniqueId());
+                    if (guild != null) {
+                        player.sendMessage(this.plugin.getMessage("GUILD_EXISTS").replaceAll("%guild%", guild.getName()));
+                    } else {
+                        guild = new Guild();
+                        guild.setName(guildName.toString());
+                        guild.setLocation(player.getLocation());
+                        if (user == null) {
+                            user = new User(player.getUniqueId(), guild.getId(), Rank.LEAD.toString(), System.currentTimeMillis(), null);
+                            this.plugin.addPlayers(user);
+                            guild.setLead(player.getUniqueId());
+                            guild.addMember(user);
+                            player.sendMessage(this.plugin.getMessage("GUILD_LEADER").replaceAll("%guild%", guild.getName()));
+                        } else if (user.haveGuild()) {
+                            player.sendMessage(this.plugin.getMessage("GUILD_WITHOUT_LEADER").replaceAll("%guild%", guild.getName()));
+                        }
+                        this.plugin.addGuild(guild);
+                        this.plugin.getConfiguration().saveGuilds();
+                        player.sendMessage(this.plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()));
                     }
-                    this.plugin.addGuild(guild);
-                    this.plugin.getConfiguration().saveGuilds();
-                    player.sendMessage(this.plugin.getMessage("GUILD_CREATED").replaceAll("%guild%", guild.getName()));
+                } else {
+                    player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
                 }
             } else {
-                player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
+                player.sendMessage(this.plugin.getMessage("COMMAND_CREATE"));
             }
-        } else {
-            player.sendMessage(this.plugin.getMessage("COMMAND_CREATE"));
         }
     }
 

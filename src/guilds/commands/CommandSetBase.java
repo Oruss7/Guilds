@@ -18,27 +18,29 @@ public class CommandSetBase {
     }
 
     private void Player(final String[] args, final Player player) {
-        if (player.hasPermission("guilds.admin.setbase")) {
-            Guild guild = null;
-            if (args.length > 1) {
-                guild = this.plugin.getGuild(args[1]);
-            } else {
-                final User user = this.plugin.getUser(player.getUniqueId());
-                if (user == null || !user.haveGuild()) {
-                    player.sendMessage(this.plugin.getMessage("COMMAND_SETBASE"));
-                    return;
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.admin.setbase")) {
+                Guild guild = null;
+                if (args.length > 1) {
+                    guild = this.plugin.getGuild(args[1]);
+                } else {
+                    final User user = this.plugin.getUser(player.getUniqueId());
+                    if (user == null || !user.haveGuild()) {
+                        player.sendMessage(this.plugin.getMessage("COMMAND_SETBASE"));
+                        return;
+                    }
+                    guild = this.plugin.getGuild(user.getGuild());
                 }
-                guild = this.plugin.getGuild(user.getGuild());
-            }
-            if (guild != null) {
-                guild.setLocation(player.getLocation());
-                player.sendMessage(this.plugin.getMessage("BASE_SET").replaceAll("%guild%", guild.getName()));
-                this.plugin.getConfiguration().saveGuilds();
+                if (guild != null) {
+                    guild.setLocation(player.getLocation());
+                    player.sendMessage(this.plugin.getMessage("BASE_SET").replaceAll("%guild%", guild.getName()));
+                    this.plugin.getConfiguration().saveGuilds();
+                } else {
+                    player.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[1]));
+                }
             } else {
-                player.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[1]));
+                player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }
 

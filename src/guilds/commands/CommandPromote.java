@@ -19,74 +19,76 @@ public class CommandPromote {
     }
 
     private void Player(final String[] args, final Player sender) {
-        if (args.length > 1) {
-            final User user = this.plugin.getUser(sender.getUniqueId());
-            if (user == null) {
-                sender.sendMessage(this.plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", sender.getDisplayName()));
-                return;
-            }
-            if ((sender.hasPermission("guilds.admin.promote") && args[0].equalsIgnoreCase("promote")) || (sender.hasPermission("guilds.admin.demote") && args[0].equalsIgnoreCase("demote"))) {
-                final OfflinePlayer playerTarget = Bukkit.getOfflinePlayer(args[1]);
-                if (playerTarget != null) {
-                    final User userTarget = this.plugin.getUser(playerTarget.getUniqueId());
-                    if (userTarget == null) {
-                        sender.sendMessage(this.plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
-                        return;
-                    }
-                    final Guild guild = this.plugin.getGuild(userTarget.getGuild());
-                    if (guild != null) {
-                        if (userTarget.getGuild() != user.getGuild()) {
-                            sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_IN_YOUR_GUILD").replaceAll("%player%", args[1]).replaceAll("%guild%", this.plugin.getGuild(user.getGuild()).getName()));
+        if (plugin.getConfig().getList("config.enableWorlds").contains(sender.getWorld().getName())) {
+            if (args.length > 1) {
+                final User user = this.plugin.getUser(sender.getUniqueId());
+                if (user == null) {
+                    sender.sendMessage(this.plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", sender.getDisplayName()));
+                    return;
+                }
+                if ((sender.hasPermission("guilds.admin.promote") && args[0].equalsIgnoreCase("promote")) || (sender.hasPermission("guilds.admin.demote") && args[0].equalsIgnoreCase("demote"))) {
+                    final OfflinePlayer playerTarget = Bukkit.getOfflinePlayer(args[1]);
+                    if (playerTarget != null) {
+                        final User userTarget = this.plugin.getUser(playerTarget.getUniqueId());
+                        if (userTarget == null) {
+                            sender.sendMessage(this.plugin.getMessage("NOT_IN_GUILD").replaceAll("%player%", args[1]));
                             return;
                         }
-                        if (args[0].equalsIgnoreCase("promote")) {
-                            switch (userTarget.promote()) {
-                                case -1: {
-                                    sender.sendMessage(this.plugin.getMessage("RANK_MAX").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                    return;
+                        final Guild guild = this.plugin.getGuild(userTarget.getGuild());
+                        if (guild != null) {
+                            if (userTarget.getGuild() != user.getGuild()) {
+                                sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_IN_YOUR_GUILD").replaceAll("%player%", args[1]).replaceAll("%guild%", this.plugin.getGuild(user.getGuild()).getName()));
+                                return;
+                            }
+                            if (args[0].equalsIgnoreCase("promote")) {
+                                switch (userTarget.promote()) {
+                                    case -1: {
+                                        sender.sendMessage(this.plugin.getMessage("RANK_MAX").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                        return;
+                                    }
+                                    case -2: {
+                                        sender.sendMessage(this.plugin.getMessage("RANK_UNKNOW").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                        return;
+                                    }
+                                    case 1: {
+                                        sender.sendMessage(this.plugin.getMessage("RANK_ALREADY_GIVE").replaceAll("%player%", Bukkit.getOfflinePlayer(guild.getLead()).getName()).replace("%rank%", userTarget.getRank()));
+                                        return;
+                                    }
                                 }
-                                case -2: {
-                                    sender.sendMessage(this.plugin.getMessage("RANK_UNKNOW").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                    return;
-                                }
-                                case 1: {
-                                    sender.sendMessage(this.plugin.getMessage("RANK_ALREADY_GIVE").replaceAll("%player%", Bukkit.getOfflinePlayer(guild.getLead()).getName()).replace("%rank%", userTarget.getRank()));
-                                    return;
+                            } else if (args[0].equalsIgnoreCase("demote")) {
+                                switch (userTarget.demote()) {
+                                    case -1: {
+                                        sender.sendMessage(this.plugin.getMessage("RANK_MIN").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                        return;
+                                    }
+                                    case -2: {
+                                        sender.sendMessage(this.plugin.getMessage("RANK_UNKNOW").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                        return;
+                                    }
                                 }
                             }
-                        } else if (args[0].equalsIgnoreCase("demote")) {
-                            switch (userTarget.demote()) {
-                                case -1: {
-                                    sender.sendMessage(this.plugin.getMessage("RANK_MIN").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                    return;
-                                }
-                                case -2: {
-                                    sender.sendMessage(this.plugin.getMessage("RANK_UNKNOW").replaceAll("%player%", args[1]).replace("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                    return;
-                                }
-                            }
-                        }
-                        this.plugin.getConfiguration().savePlayers();
-                        for (final User member : guild.getListMember()) {
-                            if (member.getOfflinePlayer().isOnline()) {
-                                if (args[0].equalsIgnoreCase("promote")) {
-                                    member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_PROMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
-                                } else {
-                                    member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_DEMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                            this.plugin.getConfiguration().savePlayers();
+                            for (final User member : guild.getListMember()) {
+                                if (member.getOfflinePlayer().isOnline()) {
+                                    if (args[0].equalsIgnoreCase("promote")) {
+                                        member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_PROMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                    } else {
+                                        member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_DEMOTE").replaceAll("%player%", args[1]).replaceAll("%rank%", Rank.valueOf(userTarget.getRank()).getRank()));
+                                    }
                                 }
                             }
+                        } else {
+                            sender.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
                         }
                     } else {
-                        sender.sendMessage(this.plugin.getMessage("GUILD_NOT_RECOGNISED").replaceAll("%guild%", args[2]));
+                        sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
                     }
                 } else {
-                    sender.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+                    sender.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
                 }
             } else {
-                sender.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
+                sender.sendMessage(this.plugin.getMessage("COMMAND_PROMOTE"));
             }
-        } else {
-            sender.sendMessage(this.plugin.getMessage("COMMAND_PROMOTE"));
         }
     }
 

@@ -21,36 +21,38 @@ public class CommandBase {
     }
 
     private void Player(final String[] args, final Player player) {
-        if (player.hasPermission("guilds.user.base")) {
-            if (Utils.isCooldown(player.getUniqueId())) {
-                player.sendMessage(this.plugin.getMessage("TELEPORTATION_COOLDOWN"));
-                return;
-            }
-            final User user = this.plugin.getUser(player.getUniqueId());
-            if (user != null) {
-                final Guild guild = this.plugin.getGuild(user.getGuild());
-                if (guild != null) {
-                    final Location location = guild.getLocation();
-                    location.getChunk().load();
-                    final Chunk c = location.getChunk();
-                    location.getWorld().loadChunk(c);
-                    location.getWorld().refreshChunk(c.getX(), c.getZ());
-                    location.setY((double) location.getWorld().getHighestBlockYAt(location));
-                    if (!Utils.checkLocation(player, location)) {
-                        player.sendMessage(this.plugin.getMessage("CAN_NOT_TELEPORT_HERE"));
-                        return;
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.user.base")) {
+                if (Utils.isCooldown(player.getUniqueId())) {
+                    player.sendMessage(this.plugin.getMessage("TELEPORTATION_COOLDOWN"));
+                    return;
+                }
+                final User user = this.plugin.getUser(player.getUniqueId());
+                if (user != null) {
+                    final Guild guild = this.plugin.getGuild(user.getGuild());
+                    if (guild != null) {
+                        final Location location = guild.getLocation();
+                        location.getChunk().load();
+                        final Chunk c = location.getChunk();
+                        location.getWorld().loadChunk(c);
+                        location.getWorld().refreshChunk(c.getX(), c.getZ());
+                        location.setY((double) location.getWorld().getHighestBlockYAt(location));
+                        if (!Utils.checkLocation(player, location)) {
+                            player.sendMessage(this.plugin.getMessage("CAN_NOT_TELEPORT_HERE"));
+                            return;
+                        }
+                        player.teleport(location);
+                        player.sendMessage(this.plugin.getMessage("TELEPORTATION"));
+                        Utils.addCooldown((Plugin) this.plugin, player.getUniqueId(), this.plugin.getConfig().getInt("config.BASE.COOLDOWN"));
+                    } else {
+                        player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
                     }
-                    player.teleport(location);
-                    player.sendMessage(this.plugin.getMessage("TELEPORTATION"));
-                    Utils.addCooldown((Plugin) this.plugin, player.getUniqueId(), this.plugin.getConfig().getInt("config.BASE.COOLDOWN"));
                 } else {
                     player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
                 }
             } else {
-                player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
+                player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }
 }
