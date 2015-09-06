@@ -19,23 +19,25 @@ public class CommandList {
     }
 
     private void Player(final String[] args, final Player player) {
-        if (player.hasPermission("guilds.user.list")) {
-            StringBuilder msg = new StringBuilder();
-            msg.append(ChatColor.YELLOW + "Liste des guildes : " + ChatColor.WHITE);
-            for (final Guild g : this.plugin.getGuilds()) {
-                if (msg.length() == 0) {
-                    msg = msg.append(g.getName());
-                } else {
-                    msg = msg.append(", ").append(g.getName());
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (player.hasPermission("guilds.user.list")) {
+                StringBuilder msg = new StringBuilder();
+                msg.append(ChatColor.YELLOW).append("Liste des guildes : ").append(ChatColor.WHITE);
+                for (final Guild g : this.plugin.getGuilds()) {
+                    if (msg.length() == 0) {
+                        msg = msg.append(g.getName());
+                    } else {
+                        msg = msg.append(", ").append(g.getName());
+                    }
                 }
-            }
-            if (this.plugin.getGuilds().isEmpty()) {
-                player.sendMessage(this.plugin.getMessage("NOT_GUILD"));
+                if (this.plugin.getGuilds().isEmpty()) {
+                    player.sendMessage(this.plugin.getMessage("NOT_GUILD"));
+                } else {
+                    player.sendMessage(msg.toString());
+                }
             } else {
-                player.sendMessage(msg.toString());
+                player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
             }
-        } else {
-            player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
         }
     }
 

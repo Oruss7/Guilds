@@ -19,52 +19,54 @@ public class CommandInvite {
     }
 
     private void Player(final String[] args, final Player player) {
-        if (args[0].equalsIgnoreCase("invite")) {
-            if (args.length < 2) {
-                player.sendMessage(this.plugin.getMessage("COMMAND_INVITE"));
-                return;
-            }
-            if (!player.hasPermission("guilds.user.invite")) {
-                player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
-                return;
-            }
-            final User user = this.plugin.getUser(player.getUniqueId());
-            if (user == null) {
-                player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
-                return;
-            }
-            if (user.getGuild() == null || !user.haveGuild()) {
-                player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
-                return;
-            }
-            final Guild guild = this.plugin.getGuild(user.getGuild());
-            final OfflinePlayer playerTarget = Bukkit.getOfflinePlayer(args[1]);
-            if (playerTarget == null) {
-                player.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
-                return;
-            }
-            User userTarget = this.plugin.getUser(playerTarget.getUniqueId());
-            if (userTarget == null) {
-                userTarget = new User(playerTarget);
-                this.plugin.addPlayers(userTarget);
-            } else if (userTarget.haveGuild()) {
-                player.sendMessage(this.plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", this.plugin.getGuild(userTarget.getGuild()).getName()));
-                return;
-            }
-            if (userTarget.getInvitation() != null) {
-                player.sendMessage(this.plugin.getMessage("ALREADY_PENDING").replaceAll("%guild%", this.plugin.getGuild(userTarget.getInvitation()).getName()));
-                return;
-            }
-            userTarget.setInvitation(guild.getId());
-            if (playerTarget.isOnline()) {
-                playerTarget.getPlayer().sendMessage(this.plugin.getMessage("INVITATION").replaceAll("%player%", player.getName()).replaceAll("%guild%", guild.getName()));
-            }
-            for (final User member : guild.getListMember()) {
-                if (member.getOfflinePlayer().isOnline()) {
-                    member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", guild.getName()));
+        if (plugin.getConfig().getList("config.enableWorlds").contains(player.getWorld().getName())) {
+            if (args[0].equalsIgnoreCase("invite")) {
+                if (args.length < 2) {
+                    player.sendMessage(this.plugin.getMessage("COMMAND_INVITE"));
+                    return;
                 }
+                if (!player.hasPermission("guilds.user.invite")) {
+                    player.sendMessage(this.plugin.getMessage("NO_PERMISSION"));
+                    return;
+                }
+                final User user = this.plugin.getUser(player.getUniqueId());
+                if (user == null) {
+                    player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
+                    return;
+                }
+                if (user.getGuild() == null || !user.haveGuild()) {
+                    player.sendMessage(this.plugin.getMessage("NOT_IN_GUILD"));
+                    return;
+                }
+                final Guild guild = this.plugin.getGuild(user.getGuild());
+                final OfflinePlayer playerTarget = Bukkit.getOfflinePlayer(args[1]);
+                if (playerTarget == null) {
+                    player.sendMessage(this.plugin.getMessage("PLAYER_NOT_RECOGNISED").replaceAll("%player%", args[1]));
+                    return;
+                }
+                User userTarget = this.plugin.getUser(playerTarget.getUniqueId());
+                if (userTarget == null) {
+                    userTarget = new User(playerTarget);
+                    this.plugin.addPlayers(userTarget);
+                } else if (userTarget.haveGuild()) {
+                    player.sendMessage(this.plugin.getMessage("ALREADY_IN_GUILD").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", this.plugin.getGuild(userTarget.getGuild()).getName()));
+                    return;
+                }
+                if (userTarget.getInvitation() != null) {
+                    player.sendMessage(this.plugin.getMessage("ALREADY_PENDING").replaceAll("%guild%", this.plugin.getGuild(userTarget.getInvitation()).getName()));
+                    return;
+                }
+                userTarget.setInvitation(guild.getId());
+                if (playerTarget.isOnline()) {
+                    playerTarget.getPlayer().sendMessage(this.plugin.getMessage("INVITATION").replaceAll("%player%", player.getName()).replaceAll("%guild%", guild.getName()));
+                }
+                for (final User member : guild.getListMember()) {
+                    if (member.getOfflinePlayer().isOnline()) {
+                        member.getPlayer().sendMessage(this.plugin.getMessage("PLAYER_INVITED").replaceAll("%player%", playerTarget.getName()).replaceAll("%guild%", guild.getName()));
+                    }
+                }
+                this.plugin.getConfiguration().savePlayers();
             }
-            this.plugin.getConfiguration().savePlayers();
         }
         if (args[0].equalsIgnoreCase("accept")) {
             final User user = this.plugin.getUser(player.getUniqueId());
@@ -117,6 +119,7 @@ public class CommandInvite {
             this.plugin.removePlayer(user);
             this.plugin.getConfiguration().savePlayers();
         }
+
     }
 
     private void Console(final String[] args) {
