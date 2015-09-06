@@ -7,6 +7,7 @@ import java.text.*;
 import org.bukkit.*;
 import guilds.*;
 import java.sql.Timestamp;
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class CommandInfo {
 

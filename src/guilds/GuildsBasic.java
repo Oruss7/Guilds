@@ -10,6 +10,7 @@ import java.util.logging.*;
 import com.sk89q.worldguard.bukkit.*;
 import java.util.*;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 
 public class GuildsBasic extends JavaPlugin {
 
@@ -33,7 +34,7 @@ public class GuildsBasic extends JavaPlugin {
         this.getLogger().info("Loaded configuration!");
         this.getServer().getPluginManager().registerEvents((Listener) new PlayerListener(this), (Plugin) this);
         this.getCommand("guilds").setExecutor((CommandExecutor) new Commands(this));
-        this.getCommand("base").setExecutor((CommandExecutor) new Commands(this));
+        this.getCommand("gtp").setExecutor((CommandExecutor) new Commands(this));
         this.getCommand("gchat").setExecutor((CommandExecutor) new Commands(this));
         this.getLogger().info("Registered commands, listeners!");
         this.clearScheduler();
@@ -60,11 +61,18 @@ public class GuildsBasic extends JavaPlugin {
     }
 
     public void removePlayer(final User user) {
-        this.players.remove(user.getPlayer().getUniqueId());
+        if (user == null) {
+            return;
+        }
+        Player player = user.getPlayer();
+        if (player == null) {
+            return;
+        }
+        this.players.remove(player.getUniqueId());
     }
 
     public String getMessage(final String path) {
-        return this.config.messagesYML.getConfig().getString("Message." + path).replaceAll("&", "�");
+        return this.config.messagesYML.getConfig().getString("Message." + path).replaceAll("&", "§");
     }
 
     private WorldGuardPlugin getWorldGuard() throws Exception {
