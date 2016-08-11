@@ -1,4 +1,4 @@
-Guilds
+[DEPRECATED] Guilds
 ======
 
 Plugin Bukkit pour gérer des guildes
